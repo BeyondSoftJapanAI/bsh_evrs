@@ -2,6 +2,7 @@
   "name": "bsh-evrs",
   "version": "1.0.0",
   "description": "Event & Visitor Reception System",
+  "homepage": "https://YOUR_USERNAME.github.io/bsh-evrs",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.4",
