@@ -32,7 +32,8 @@ if [ $# -eq 0 ]; then
 fi
 
 DOMAIN=$1
-WWW_DOMAIN="www.$DOMAIN"
+WWW_DOMAIN="$DOMAIN"
+
 
 echo "=== SSL配置脚本 - BSH Event Registration System ==="
 echo "域名: $DOMAIN"
