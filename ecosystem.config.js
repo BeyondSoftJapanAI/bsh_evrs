@@ -6,7 +6,7 @@ module.exports = {
     {
       name: 'bsh-evrs',
       script: 'serve',
-      args: '-s build -l 3000',
+      args: '-s build -l 80',
       cwd: '/opt/bsh-evrs',
       instances: 1,
       autorestart: true,
@@ -14,11 +14,11 @@ module.exports = {
       max_memory_restart: '1G',
       env: {
         NODE_ENV: 'production',
-        PORT: 3000
+        PORT: 80
       },
       env_production: {
         NODE_ENV: 'production',
-        PORT: 3000
+        PORT: 80
       },
       // 日志配置
       log_file: '/var/log/pm2/bsh-evrs.log',

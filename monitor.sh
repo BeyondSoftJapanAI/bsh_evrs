@@ -78,10 +78,10 @@ check_network() {
     print_info "=== 网络状态 ==="
     
     # 检查端口监听
-    if netstat -tlnp 2>/dev/null | grep -q ":3000 "; then
-        print_status "应用端口 3000 正在监听"
+    if netstat -tlnp 2>/dev/null | grep -q ":80 "; then
+        print_status "应用端口 80 正在监听"
     else
-        print_error "应用端口 3000 未监听"
+        print_error "应用端口 80 未监听"
     fi
     
     if netstat -tlnp 2>/dev/null | grep -q ":80 "; then
@@ -142,7 +142,7 @@ check_app_health() {
     print_info "=== 应用程序健康检查 ==="
     
     # 检查本地应用响应
-    if curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q "200"; then
+    if curl -s -o /dev/null -w "%{http_code}" http://localhost:80 | grep -q "200"; then
         print_status "本地应用响应正常 (HTTP 200)"
     else
         print_error "本地应用响应异常"
@@ -216,7 +216,7 @@ generate_summary() {
     TOTAL_CHECKS=0
     
     # 应用程序检查
-    if curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q "200"; then
+    if curl -s -o /dev/null -w "%{http_code}" http://localhost:80 | grep -q "200"; then
         HEALTH_SCORE=$((HEALTH_SCORE + 1))
     fi
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
@@ -277,7 +277,7 @@ main() {
             ;;
         -q|--quiet)
             # 静默模式，只检查关键服务
-            if ! curl -s -o /dev/null -w "%{http_code}" http://localhost:3000 | grep -q "200"; then
+            if ! curl -s -o /dev/null -w "%{http_code}" http://localhost:80 | grep -q "200"; then
                 print_error "应用程序响应异常"
                 exit 1
             fi
