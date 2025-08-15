@@ -95,7 +95,7 @@ server {
     server_name $DOMAIN $WWW_DOMAIN;
     
     location / {
-        proxy_pass http://localhost:80;
+        proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -113,7 +113,7 @@ server {
     
     # 静态文件缓存
     location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)\$ {
-        proxy_pass http://localhost:80;
+        proxy_pass http://localhost:3000;
         proxy_cache_valid 200 1y;
         add_header Cache-Control "public, immutable";
     }

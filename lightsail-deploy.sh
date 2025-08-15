@@ -124,7 +124,7 @@ module.exports = {
   apps: [{
     name: 'bsh-evrs',
     script: 'serve',
-    args: '-s build -l 80',
+    args: '-s build -l 3000',
     instances: 1,
     autorestart: true,
     watch: false,
