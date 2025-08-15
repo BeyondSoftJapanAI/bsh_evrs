@@ -78,9 +78,16 @@ install_nginx() {
 install_certbot() {
     if ! command -v certbot &> /dev/null; then
         print_status "安装Certbot..."
+        apt update
         apt install certbot python3-certbot-nginx -y
     else
         print_status "Certbot已安装"
+    fi
+    
+    # 验证nginx插件是否可用
+    if ! certbot plugins | grep -q nginx; then
+        print_status "重新安装Certbot nginx插件..."
+        apt install --reinstall python3-certbot-nginx -y
     fi
 }
 
@@ -149,14 +156,33 @@ EOF
 get_ssl_certificate() {
     print_status "获取SSL证书..."
     
-    # 使用Certbot获取证书
-    certbot --nginx -d $DOMAIN -d $WWW_DOMAIN --non-interactive --agree-tos --email admin@$DOMAIN
-    
-    if [ $? -eq 0 ]; then
-        print_status "SSL证书获取成功"
+    # 检查nginx插件是否可用
+    if ! certbot plugins | grep -q nginx; then
+        print_error "Nginx插件不可用，尝试使用webroot方式获取证书"
+        
+        # 创建webroot目录
+        mkdir -p /var/www/html/.well-known/acme-challenge
+        
+        # 使用webroot方式获取证书
+        certbot certonly --webroot -w /var/www/html -d $DOMAIN -d $WWW_DOMAIN --non-interactive --agree-tos --email admin@$DOMAIN
+        
+        if [ $? -eq 0 ]; then
+            print_status "SSL证书获取成功，现在配置Nginx..."
+            configure_nginx_ssl
+        else
+            print_error "SSL证书获取失败"
+            exit 1
+        fi
     else
-        print_error "SSL证书获取失败"
-        exit 1
+        # 使用nginx插件获取证书
+        certbot --nginx -d $DOMAIN -d $WWW_DOMAIN --non-interactive --agree-tos --email admin@$DOMAIN
+        
+        if [ $? -eq 0 ]; then
+            print_status "SSL证书获取成功"
+        else
+            print_error "SSL证书获取失败"
+            exit 1
+        fi
     fi
 }
 
@@ -216,6 +242,71 @@ show_completion_info() {
     echo "  - 重启Nginx: systemctl restart nginx"
     echo ""
     print_status "您的网站现在已启用HTTPS加密！"
+}
+
+# 手动配置Nginx SSL
+configure_nginx_ssl() {
+    print_status "手动配置Nginx SSL..."
+    
+    # 备份原配置
+    cp /etc/nginx/sites-available/bsh-evrs /etc/nginx/sites-available/bsh-evrs.backup
+    
+    # 创建SSL配置
+    cat > /etc/nginx/sites-available/bsh-evrs << EOF
+server {
+    listen 80;
+    server_name $DOMAIN $WWW_DOMAIN;
+    return 301 https://\$server_name\$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name $DOMAIN $WWW_DOMAIN;
+    
+    ssl_certificate /etc/letsencrypt/live/$DOMAIN/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/$DOMAIN/privkey.pem;
+    
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_cache_bypass \$http_upgrade;
+        
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+    
+    location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)\$ {
+        proxy_pass http://localhost:3000;
+        proxy_cache_valid 200 1y;
+        add_header Cache-Control "public, immutable";
+    }
+    
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    
+    access_log /var/log/nginx/bsh-evrs.access.log;
+    error_log /var/log/nginx/bsh-evrs.error.log;
+}
+EOF
+    
+    # 测试配置
+    nginx -t && systemctl reload nginx
 }
 
 # 主函数
