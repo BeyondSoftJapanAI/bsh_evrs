@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200">
+  <!-- BEYONDSOFT Logo -->
+  <defs>
+    <style>
+      .logo-text { fill: #1976d2; font-family: Arial, sans-serif; font-weight: bold; }
+      .logo-shape { fill: #1976d2; }
+      .tagline { fill: #1976d2; font-family: Arial, sans-serif; font-weight: normal; }
+    </style>
+  </defs>
+  
+  <!-- Diamond shapes -->
+  <g transform="translate(20,40)">
+    <!-- Top diamond -->
+    <polygon class="logo-shape" points="40,0 60,20 40,40 20,20" transform="rotate(45 40 20)"/>
+    <!-- Left diamond -->
+    <polygon class="logo-shape" points="0,20 20,40 0,60 -20,40" transform="rotate(45 0 40)"/>
+    <!-- Right diamond -->
+    <polygon class="logo-shape" points="80,20 100,40 80,60 60,40" transform="rotate(45 80 40)"/>
+    <!-- Bottom diamond -->
+    <polygon class="logo-shape" points="40,40 60,60 40,80 20,60" transform="rotate(45 40 60)"/>
+    
+    <!-- Center connecting elements -->
+    <polygon class="logo-shape" points="30,30 50,30 50,50 30,50"/>
+  </g>
+  
+  <!-- BEYONDSOFT text -->
+  <text x="140" y="70" class="logo-text" font-size="36">BEYONDSOFT</text>
+  <text x="140" y="100" class="tagline" font-size="18">beyond your expectations</text>
+  
+  <!-- Registered trademark -->
+  <text x="520" y="60" class="logo-text" font-size="12">®</text>
+</svg>

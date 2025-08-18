@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import registrationService from '../services/registrationService';
 import emailService from '../services/emailService';
 
 const RegistrationManagement = () => {
+  const navigate = useNavigate();
   const [registrations, setRegistrations] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState('');
@@ -190,6 +192,10 @@ const RegistrationManagement = () => {
 
   return (
     <div className="main-content">
+      <button className="back-button" onClick={() => navigate('/admin')}>
+        ← 管理画面
+      </button>
+      
       <div className="container">
         <h1 className="page-title">申込者情報管理</h1>
         

@@ -177,7 +177,7 @@ cd /opt/bsh_evrs
 git pull origin master
 npm install
 npm run build
-pm2 restart bsh-evrs
+pm2 restart bsh-evrs./
 EOF
 
 chmod +x deploy.sh

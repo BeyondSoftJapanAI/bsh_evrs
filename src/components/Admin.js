@@ -60,7 +60,12 @@ const Admin = () => {
     autoBackup: true,
     notificationEnabled: true,
     faceRecognitionEnabled: true,
-    qrCodeExpiry: 24 // hours
+    qrCodeExpiry: 24, // hours
+    showDailyVisitorMenu: true,
+    showEventReceptionMenu: true,
+    showEmployeeMenu: false,
+    showDeliveryMenu: true,
+    showInterviewerMenu: false
   });
 
   const handleExportData = (type) => {
@@ -115,10 +120,20 @@ const Admin = () => {
   };
 
   const saveSettings = () => {
-    // 設定保存の模擬
+    // 設定をlocalStorageに保存
+    localStorage.setItem('systemSettings', JSON.stringify(systemSettings));
     console.log('設定保存:', systemSettings);
     alert('設定が保存されました。');
   };
+
+  // コンポーネントマウント時に設定を読み込み
+  React.useEffect(() => {
+    const savedSettings = localStorage.getItem('systemSettings');
+    if (savedSettings) {
+      const parsedSettings = JSON.parse(savedSettings);
+      setSystemSettings(prev => ({ ...prev, ...parsedSettings }));
+    }
+  }, []);
 
   const getActivityIcon = (type) => {
     switch (type) {
@@ -188,6 +203,46 @@ const Admin = () => {
             </div>
             
             <div className="card">
+              <h3>📝 イベント申し込み</h3>
+              <p>イベントへの申し込み管理</p>
+              <button 
+                className="btn btn-large" 
+                onClick={() => navigate('/event-registration')}
+              >
+                イベント申し込み
+              </button>
+            </div>
+            
+            <div className="card">
+              <h3>📊 申込者管理</h3>
+              <p>イベント申込者の管理・統計</p>
+              <button 
+                className="btn btn-large" 
+                onClick={() => navigate('/registration-management')}
+              >
+                申込者管理
+              </button>
+            </div>
+            
+            <div className="card">
+              <h3>⚙️ システム設定</h3>
+              <p>システム全体の設定・メニュー表示制御</p>
+              <button 
+                className="btn btn-large" 
+                onClick={() => {
+                  const settingsSection = document.getElementById('system-settings-section');
+                  if (settingsSection) {
+                    settingsSection.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
+              >
+                システム設定
+              </button>
+            </div>
+          </div>
+          
+          <div className="grid grid-2" style={{ marginTop: '20px' }}>
+            <div className="card">
               <h3>📊 データエクスポート</h3>
               <p>各種データのエクスポート機能</p>
               <div className="mt-2">
@@ -253,7 +308,7 @@ const Admin = () => {
         </div>
         
         {/* システム設定 */}
-        <div className="system-settings">
+        <div className="system-settings" id="system-settings-section">
           <h2>システム設定</h2>
           <div className="form-card">
             <div className="form-group">
@@ -322,6 +377,68 @@ const Admin = () => {
                   style={{ marginRight: '8px' }}
                 />
                 顔認証機能を有効にする
+              </label>
+            </div>
+            
+            <h4 style={{ marginTop: '20px', marginBottom: '15px', color: '#333' }}>メニュー表示設定</h4>
+            
+            <div className="form-group">
+              <label className="form-label">
+                <input
+                  type="checkbox"
+                  checked={systemSettings.showDailyVisitorMenu}
+                  onChange={(e) => handleSettingChange('showDailyVisitorMenu', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                日常来訪者メニューを表示する
+              </label>
+            </div>
+            
+            <div className="form-group">
+              <label className="form-label">
+                <input
+                  type="checkbox"
+                  checked={systemSettings.showEventReceptionMenu}
+                  onChange={(e) => handleSettingChange('showEventReceptionMenu', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                イベント受付メニューを表示する
+              </label>
+            </div>
+            
+            <div className="form-group">
+              <label className="form-label">
+                <input
+                  type="checkbox"
+                  checked={systemSettings.showEmployeeMenu}
+                  onChange={(e) => handleSettingChange('showEmployeeMenu', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                社員用メニューを表示する
+              </label>
+            </div>
+            
+            <div className="form-group">
+              <label className="form-label">
+                <input
+                  type="checkbox"
+                  checked={systemSettings.showDeliveryMenu}
+                  onChange={(e) => handleSettingChange('showDeliveryMenu', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                配送業者メニューを表示する
+              </label>
+            </div>
+            
+            <div className="form-group">
+              <label className="form-label">
+                <input
+                  type="checkbox"
+                  checked={systemSettings.showInterviewerMenu}
+                  onChange={(e) => handleSettingChange('showInterviewerMenu', e.target.checked)}
+                  style={{ marginRight: '8px' }}
+                />
+                面接者メニューを表示する
               </label>
             </div>
             

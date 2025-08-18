@@ -1,67 +1,82 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const navigate = useNavigate();
+  const [menuSettings, setMenuSettings] = useState({
+    showDailyVisitorMenu: true,
+    showEventReceptionMenu: true,
+    showEmployeeMenu: false,
+    showDeliveryMenu: true,
+    showInterviewerMenu: false
+  });
 
-  const menuItems = [
+  // 設定を読み込み
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('systemSettings');
+    if (savedSettings) {
+      const parsedSettings = JSON.parse(savedSettings);
+      setMenuSettings({
+        showDailyVisitorMenu: parsedSettings.showDailyVisitorMenu !== undefined ? parsedSettings.showDailyVisitorMenu : true,
+        showEventReceptionMenu: parsedSettings.showEventReceptionMenu !== undefined ? parsedSettings.showEventReceptionMenu : true,
+        showEmployeeMenu: parsedSettings.showEmployeeMenu || false,
+        showDeliveryMenu: parsedSettings.showDeliveryMenu !== undefined ? parsedSettings.showDeliveryMenu : true,
+        showInterviewerMenu: parsedSettings.showInterviewerMenu || false
+      });
+    }
+  }, []);
+
+  const allMenuItems = [
     {
       id: 'daily-visitor',
       title: '日常来訪者',
-      description: 'アポあり・アポなしの来訪者受付',
+      description: '日常の来訪者受付',
       icon: '👥',
-      path: '/daily-visitor'
+      path: '/daily-visitor',
+      condition: 'showDailyVisitorMenu'
     },
     {
       id: 'event-reception',
       title: 'イベント受付',
-      description: 'QRコード・名刺による受付',
-      icon: '🎫',
-      path: '/event-reception'
-    },
-    {
-      id: 'event-registration',
-      title: 'イベント申し込み',
-      description: 'イベント公開・申し込み受付',
-      icon: '📝',
-      path: '/event-registration'
-    },
-    {
-      id: 'registration-management',
-      title: '申込者管理',
-      description: '申込者情報・統計管理',
-      icon: '📊',
-      path: '/registration-management'
+      description: 'イベント参加者の受付',
+      icon: '🎪',
+      path: '/event-reception',
+      condition: 'showEventReceptionMenu'
     },
     {
       id: 'employee-attendance',
       title: '社員用',
-      description: '入退室・打刻管理',
-      icon: '👤',
-      path: '/employee-attendance'
+      description: '社員の出退勤管理',
+      icon: '👔',
+      path: '/employee-attendance',
+      condition: 'showEmployeeMenu'
     },
     {
       id: 'delivery',
       title: '配送業者',
-      description: '配送業者受付・通知',
-      icon: '📦',
-      path: '/delivery'
+      description: '配送業者の受付',
+      icon: '🚚',
+      path: '/delivery',
+      condition: 'showDeliveryMenu'
     },
     {
-      id: 'interview',
+      id: 'interviewer',
       title: '面接者',
-      description: '面接者受付・通知',
+      description: '面接者の受付',
       icon: '💼',
-      path: '/interview'
+      path: '/interviewer',
+      condition: 'showInterviewerMenu'
     },
-    {
-      id: 'admin',
-      title: '管理画面',
-      description: '履歴確認・設定管理',
-      icon: '⚙️',
-      path: '/admin'
-    }
+
   ];
+
+  // 設定に基づいてメニュー項目をフィルタリング
+  const menuItems = allMenuItems.filter(item => {
+    if (item.condition) {
+      return menuSettings[item.condition];
+    }
+    return true;
+  });
 
   const handleCardClick = (path) => {
     navigate(path);
