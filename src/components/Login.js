@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import './Login.css';
 
 const Login = ({ onLogin }) => {
+  const { t } = useTranslation();
   const [credentials, setCredentials] = useState({
     username: '',
     password: ''
@@ -26,7 +28,7 @@ const Login = ({ onLogin }) => {
 
     // Basic validation
     if (!credentials.username || !credentials.password) {
-      setError('ユーザー名とパスワードを入力してください');
+      setError(t('login.invalidCredentials'));
       setIsLoading(false);
       return;
     }
@@ -43,10 +45,10 @@ const Login = ({ onLogin }) => {
           loginTime: new Date().toISOString()
         });
       } else {
-        setError('ユーザー名またはパスワードが正しくありません');
+        setError(t('login.invalidCredentials'));
       }
     } catch (err) {
-      setError('ログインに失敗しました。もう一度お試しください。');
+      setError(t('login.invalidCredentials'));
     } finally {
       setIsLoading(false);
     }
@@ -56,34 +58,34 @@ const Login = ({ onLogin }) => {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <h1>BSH Event Registration System</h1>
-          <h2>ログイン</h2>
+          <h1>{t('login.title')}</h1>
+          <h2>{t('common.login')}</h2>
         </div>
         
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="username">ユーザー名</label>
+            <label htmlFor="username">{t('login.username')}</label>
             <input
               type="text"
               id="username"
               name="username"
               value={credentials.username}
               onChange={handleInputChange}
-              placeholder="ユーザー名を入力"
+              placeholder={t('login.username')}
               disabled={isLoading}
               autoComplete="username"
             />
           </div>
           
           <div className="form-group">
-            <label htmlFor="password">パスワード</label>
+            <label htmlFor="password">{t('login.password')}</label>
             <input
               type="password"
               id="password"
               name="password"
               value={credentials.password}
               onChange={handleInputChange}
-              placeholder="パスワードを入力"
+              placeholder={t('login.password')}
               disabled={isLoading}
               autoComplete="current-password"
             />
@@ -100,7 +102,7 @@ const Login = ({ onLogin }) => {
             className="login-button"
             disabled={isLoading}
           >
-            {isLoading ? 'ログイン中...' : 'ログイン'}
+            {isLoading ? t('common.loading') : t('login.loginButton')}
           </button>
         </form>
         

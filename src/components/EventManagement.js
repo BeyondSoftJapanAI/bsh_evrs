@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const EventManagement = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState('list'); // list, create, edit, qr-generate
   const [events, setEvents] = useState([]);
 
@@ -150,15 +152,15 @@ const EventManagement = () => {
     setEvents(updatedEvents);
     saveEvents(updatedEvents);
     setStep('list');
-    alert(step === 'create' ? 'イベントを作成しました。' : 'イベントを更新しました。');
+    alert(step === 'create' ? t('eventManagement.eventCreated') : t('eventManagement.eventUpdated'));
   };
 
   const handleDeleteEvent = (eventId) => {
-    if (window.confirm('このイベントを削除しますか？')) {
+    if (window.confirm(t('eventManagement.confirmDelete'))) {
       const updatedEvents = events.filter(event => event.id !== eventId);
       setEvents(updatedEvents);
       saveEvents(updatedEvents);
-      alert('イベントを削除しました。');
+      alert(t('eventManagement.eventDeleted'));
     }
   };
 
@@ -203,7 +205,7 @@ const EventManagement = () => {
     };
     
     console.log('申込完了メール送信:', emailData);
-    alert('申込完了メールとQRコードを送信しました。');
+    alert(t('eventManagement.emailSent'));
   };
 
   const exportEventData = (event) => {
@@ -228,17 +230,17 @@ const EventManagement = () => {
   return (
     <div className="main-content">
       <button className="back-button" onClick={() => navigate('/admin')}>
-        ← 管理画面
+        {t('common.backToAdmin')}
       </button>
       
       <div className="container">
-        <h1 className="page-title">イベント管理</h1>
+        <h1 className="page-title">{t('eventManagement.title')}</h1>
         
         {step === 'list' && (
           <div>
             <div className="text-center mb-4">
               <button className="btn btn-large" onClick={handleCreateEvent}>
-                新しいイベント作成
+                {t('eventManagement.createNewEvent')}
               </button>
             </div>
             
@@ -246,16 +248,16 @@ const EventManagement = () => {
               {events.map((event) => (
                 <div key={event.id} className="card">
                   <h3>{event.name}</h3>
-                  <p><strong>日時:</strong> {event.date} {event.time}</p>
-                  <p><strong>場所:</strong> {event.location}</p>
-                  <p><strong>定員:</strong> {event.capacity}名</p>
-                  <p><strong>申込者数:</strong> {event.registrations}名</p>
-                  <p><strong>ステータス:</strong> 
+                  <p><strong>{t('eventManagement.dateTime')}:</strong> {event.date} {event.time}</p>
+                  <p><strong>{t('eventManagement.location')}:</strong> {event.location}</p>
+                  <p><strong>{t('eventManagement.capacity')}:</strong> {event.capacity}{t('eventManagement.people')}</p>
+                  <p><strong>{t('eventManagement.registrations')}:</strong> {event.registrations}{t('eventManagement.people')}</p>
+                  <p><strong>{t('eventManagement.status')}:</strong> 
                     <span style={{ 
                       color: event.status === 'active' ? 'green' : 'red',
                       fontWeight: 'bold'
                     }}>
-                      {event.status === 'active' ? '募集中' : '終了'}
+                      {event.status === 'active' ? t('eventManagement.recruiting') : t('eventManagement.ended')}
                     </span>
                   </p>
                   
@@ -265,28 +267,28 @@ const EventManagement = () => {
                       onClick={() => handleEditEvent(event)}
                       style={{ marginRight: '10px' }}
                     >
-                      編集
+                      {t('common.edit')}
                     </button>
                     <button 
                       className="btn btn-secondary" 
                       onClick={() => generateQRCode(event)}
                       style={{ marginRight: '10px' }}
                     >
-                      QR生成
+                      {t('eventManagement.generateQR')}
                     </button>
                     <button 
                       className="btn btn-warning" 
                       onClick={() => exportEventData(event)}
                       style={{ marginRight: '10px' }}
                     >
-                      エクスポート
+                      {t('common.export')}
                     </button>
                     <button 
                       className="btn" 
                       onClick={() => handleDeleteEvent(event.id)}
                       style={{ background: '#dc3545' }}
                     >
-                      削除
+                      {t('common.delete')}
                     </button>
                   </div>
                 </div>
@@ -299,22 +301,22 @@ const EventManagement = () => {
           <div className="form-container">
             <div className="form-card">
               <h2 className="text-large mb-4 text-center">
-                {step === 'create' ? 'イベント作成' : 'イベント編集'}
+                {step === 'create' ? t('eventManagement.createEvent') : t('eventManagement.editEvent')}
               </h2>
               
               <div className="form-group">
-                <label className="form-label">イベント名 *</label>
+                <label className="form-label">{t('eventManagement.eventName')} *</label>
                 <input
                   type="text"
                   className="form-input"
                   value={currentEvent.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder="2025年度経営方針説明会"
+                  placeholder={t('eventManagement.eventNamePlaceholder')}
                 />
               </div>
               
               <div className="form-group">
-                <label className="form-label">開催日 *</label>
+                <label className="form-label">{t('eventManagement.eventDate')} *</label>
                 <input
                   type="date"
                   className="form-input"
@@ -324,7 +326,7 @@ const EventManagement = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label">開始時刻 *</label>
+                <label className="form-label">{t('eventManagement.startTime')} *</label>
                 <input
                   type="time"
                   className="form-input"
@@ -334,18 +336,18 @@ const EventManagement = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label">開催場所 *</label>
+                <label className="form-label">{t('eventManagement.venue')} *</label>
                 <input
                   type="text"
                   className="form-input"
                   value={currentEvent.location}
                   onChange={(e) => handleInputChange('location', e.target.value)}
-                  placeholder="本社会議室A"
+                  placeholder={t('eventManagement.venuePlaceholder')}
                 />
               </div>
               
               <div className="form-group">
-                <label className="form-label">定員 *</label>
+                <label className="form-label">{t('eventManagement.capacity')} *</label>
                 <input
                   type="number"
                   className="form-input"
@@ -357,7 +359,7 @@ const EventManagement = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label">申込締切日</label>
+                <label className="form-label">{t('eventManagement.deadline')}</label>
                 <input
                   type="date"
                   className="form-input"
@@ -367,24 +369,24 @@ const EventManagement = () => {
               </div>
               
               <div className="form-group">
-                <label className="form-label">連絡先メールアドレス</label>
+                <label className="form-label">{t('eventManagement.contactEmail')}</label>
                 <input
                   type="email"
                   className="form-input"
                   value={currentEvent.contactEmail}
                   onChange={(e) => handleInputChange('contactEmail', e.target.value)}
-                  placeholder="event@company.com"
+                  placeholder={t('eventManagement.contactEmailPlaceholder')}
                 />
               </div>
               
               <div className="form-group">
-                <label className="form-label">イベント説明</label>
+                <label className="form-label">{t('eventManagement.description')}</label>
                 <textarea
                   className="form-input"
                   rows="4"
                   value={currentEvent.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
-                  placeholder="イベントの詳細説明を入力してください"
+                  placeholder={t('eventManagement.descriptionPlaceholder')}
                 />
               </div>
               
@@ -394,14 +396,14 @@ const EventManagement = () => {
                   onClick={handleSaveEvent}
                   disabled={!currentEvent.name || !currentEvent.date || !currentEvent.time || !currentEvent.location}
                 >
-                  {step === 'create' ? '作成' : '更新'}
+                  {step === 'create' ? t('common.create') : t('common.update')}
                 </button>
                 <button 
                   className="btn btn-secondary" 
                   onClick={() => setStep('list')}
                   style={{ marginLeft: '10px' }}
                 >
-                  キャンセル
+                  {t('common.cancel')}
                 </button>
               </div>
             </div>
@@ -411,29 +413,29 @@ const EventManagement = () => {
         {step === 'qr-generate' && selectedEvent && (
           <div className="form-container">
             <div className="form-card">
-              <h2 className="text-large mb-4 text-center">QRコード生成</h2>
+              <h2 className="text-large mb-4 text-center">{t('eventManagement.generateQRCode')}</h2>
               
               <div className="visitor-info">
-                <h3>イベント情報</h3>
-                <p><strong>イベント名:</strong> {selectedEvent.name}</p>
-                <p><strong>日時:</strong> {selectedEvent.date} {selectedEvent.time}</p>
-                <p><strong>場所:</strong> {selectedEvent.location}</p>
-                <p><strong>定員:</strong> {selectedEvent.capacity}名</p>
+                <h3>{t('eventManagement.eventInfo')}</h3>
+                <p><strong>{t('eventManagement.eventName')}:</strong> {selectedEvent.name}</p>
+                <p><strong>{t('eventManagement.dateTime')}:</strong> {selectedEvent.date} {selectedEvent.time}</p>
+                <p><strong>{t('eventManagement.location')}:</strong> {selectedEvent.location}</p>
+                <p><strong>{t('eventManagement.capacity')}:</strong> {selectedEvent.capacity}{t('eventManagement.people')}</p>
               </div>
               
               <div className="text-center mt-4">
-                <h3>申込用QRコード</h3>
+                <h3>{t('eventManagement.registrationQR')}</h3>
                 <div style={{ margin: '20px 0' }}>
                   <img src={qrCode} alt="Event QR Code" style={{ maxWidth: '200px' }} />
                 </div>
                 
                 <p style={{ fontSize: '14px', color: '#666' }}>
-                  申込者はこのQRコードをスキャンして申込を行います。
+                  {t('eventManagement.qrInstructions')}
                 </p>
               </div>
               
               <div className="alert alert-info">
-                <strong>申込URL:</strong> https://company.com/events/{selectedEvent.id}/register
+                <strong>{t('eventManagement.registrationURL')}:</strong> https://company.com/events/{selectedEvent.id}/register
               </div>
               
               <div className="text-center mt-4">
@@ -441,14 +443,14 @@ const EventManagement = () => {
                   className="btn btn-large" 
                   onClick={() => sendRegistrationEmail(selectedEvent)}
                 >
-                  申込完了メール送信テスト
+                  {t('eventManagement.testEmail')}
                 </button>
                 <button 
                   className="btn btn-secondary" 
                   onClick={() => setStep('list')}
                   style={{ marginLeft: '10px' }}
                 >
-                  戻る
+                  {t('common.back')}
                 </button>
               </div>
             </div>

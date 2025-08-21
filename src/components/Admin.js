@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Admin = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [stats, setStats] = useState({
     todayVisitors: 23,
     todayEvents: 2,
@@ -18,35 +20,35 @@ const Admin = () => {
     {
       id: 1,
       type: 'visitor',
-      message: '田中様が来訪されました（営業部・佐藤様との面談）',
+      message: t('admin.recentActivities.visitorMeeting'),
       time: '14:30',
       status: 'completed'
     },
     {
       id: 2,
       type: 'event',
-      message: 'DX推進セミナーの受付が開始されました',
+      message: t('admin.recentActivities.eventStarted'),
       time: '14:15',
       status: 'active'
     },
     {
       id: 3,
       type: 'delivery',
-      message: 'ヤマト運輸からの配送物が到着しました',
+      message: t('admin.recentActivities.deliveryArrived'),
       time: '13:45',
       status: 'completed'
     },
     {
       id: 4,
       type: 'employee',
-      message: '山田太郎さんが出勤時刻修正を申請しました',
+      message: t('admin.recentActivities.attendanceRequest'),
       time: '13:20',
       status: 'pending'
     },
     {
       id: 5,
       type: 'interview',
-      message: '新卒採用面接（エンジニア職）が完了しました',
+      message: t('admin.recentActivities.interviewCompleted'),
       time: '12:30',
       status: 'completed'
     }
@@ -86,7 +88,7 @@ const Admin = () => {
     
     URL.revokeObjectURL(url);
     
-    alert(`${type}データをエクスポートしました。`);
+    alert(t('admin.alerts.dataExported', { type }));
   };
 
   const handleSystemBackup = () => {
@@ -109,7 +111,7 @@ const Admin = () => {
     
     URL.revokeObjectURL(url);
     
-    alert('システムバックアップが完了しました。');
+    alert(t('admin.alerts.backupCompleted'));
   };
 
   const handleSettingChange = (key, value) => {
@@ -123,7 +125,7 @@ const Admin = () => {
     // 設定をlocalStorageに保存
     localStorage.setItem('systemSettings', JSON.stringify(systemSettings));
     console.log('設定保存:', systemSettings);
-    alert('設定が保存されました。');
+    alert(t('admin.alerts.settingsSaved'));
   };
 
   // コンポーネントマウント時に設定を読み込み
@@ -158,75 +160,75 @@ const Admin = () => {
   return (
     <div className="main-content">
       <button className="back-button" onClick={() => navigate('/')}>
-        ← ホーム
+        ← {t('common.home')}
       </button>
       
       <div className="container">
-        <h1 className="page-title">管理画面</h1>
+        <h1 className="page-title">{t('admin.title')}</h1>
         
         {/* 統計情報 */}
         <div className="admin-stats">
-          <h2>今日の統計</h2>
+          <h2>{t('admin.todayStats')}</h2>
           <div className="grid grid-4">
             <div className="stat-card">
               <h3>{stats.todayVisitors}</h3>
-              <p>来訪者</p>
+              <p>{t('admin.stats.visitors')}</p>
             </div>
             <div className="stat-card">
               <h3>{stats.todayEvents}</h3>
-              <p>イベント</p>
+              <p>{t('admin.stats.events')}</p>
             </div>
             <div className="stat-card">
               <h3>{stats.todayEmployees}</h3>
-              <p>出勤者</p>
+              <p>{t('admin.stats.employees')}</p>
             </div>
             <div className="stat-card">
               <h3>{stats.todayDeliveries}</h3>
-              <p>配送</p>
+              <p>{t('admin.stats.deliveries')}</p>
             </div>
           </div>
         </div>
         
         {/* 管理機能 */}
         <div className="admin-functions">
-          <h2>管理機能</h2>
+          <h2>{t('admin.managementFunctions')}</h2>
           <div className="grid grid-3">
             <div className="card">
-              <h3>📅 イベント管理</h3>
-              <p>イベントの作成・編集・QRコード生成</p>
+              <h3>📅 {t('admin.functions.eventManagement.title')}</h3>
+              <p>{t('admin.functions.eventManagement.description')}</p>
               <button 
                 className="btn btn-large" 
                 onClick={() => navigate('/event-management')}
               >
-                イベント管理
+                {t('admin.functions.eventManagement.button')}
               </button>
             </div>
             
             <div className="card">
-              <h3>📝 イベント申し込み</h3>
-              <p>イベントへの申し込み管理</p>
+              <h3>📝 {t('admin.functions.eventRegistration.title')}</h3>
+              <p>{t('admin.functions.eventRegistration.description')}</p>
               <button 
                 className="btn btn-large" 
                 onClick={() => navigate('/event-registration')}
               >
-                イベント申し込み
+                {t('admin.functions.eventRegistration.button')}
               </button>
             </div>
             
             <div className="card">
-              <h3>📊 申込者管理</h3>
-              <p>イベント申込者の管理・統計</p>
+              <h3>📊 {t('admin.functions.registrationManagement.title')}</h3>
+              <p>{t('admin.functions.registrationManagement.description')}</p>
               <button 
                 className="btn btn-large" 
                 onClick={() => navigate('/registration-management')}
               >
-                申込者管理
+                {t('admin.functions.registrationManagement.button')}
               </button>
             </div>
             
             <div className="card">
-              <h3>⚙️ システム設定</h3>
-              <p>システム全体の設定・メニュー表示制御</p>
+              <h3>⚙️ {t('admin.functions.systemSettings.title')}</h3>
+              <p>{t('admin.functions.systemSettings.description')}</p>
               <button 
                 className="btn btn-large" 
                 onClick={() => {
@@ -236,48 +238,48 @@ const Admin = () => {
                   }
                 }}
               >
-                システム設定
+                {t('admin.functions.systemSettings.button')}
               </button>
             </div>
           </div>
           
           <div className="grid grid-2" style={{ marginTop: '20px' }}>
             <div className="card">
-              <h3>📊 データエクスポート</h3>
-              <p>各種データのエクスポート機能</p>
+              <h3>📊 {t('admin.functions.dataExport.title')}</h3>
+              <p>{t('admin.functions.dataExport.description')}</p>
               <div className="mt-2">
                 <button 
                   className="btn" 
                   onClick={() => handleExportData('visitors')}
                   style={{ marginRight: '5px', marginBottom: '5px' }}
                 >
-                  来訪者
+                  {t('admin.functions.dataExport.visitors')}
                 </button>
                 <button 
                   className="btn" 
                   onClick={() => handleExportData('events')}
                   style={{ marginRight: '5px', marginBottom: '5px' }}
                 >
-                  イベント
+                  {t('admin.functions.dataExport.events')}
                 </button>
                 <button 
                   className="btn" 
                   onClick={() => handleExportData('attendance')}
                   style={{ marginRight: '5px', marginBottom: '5px' }}
                 >
-                  勤怠
+                  {t('admin.functions.dataExport.attendance')}
                 </button>
               </div>
             </div>
             
             <div className="card">
-              <h3>🔧 システム管理</h3>
-              <p>バックアップ・設定管理</p>
+              <h3>🔧 {t('admin.functions.systemManagement.title')}</h3>
+              <p>{t('admin.functions.systemManagement.description')}</p>
               <button 
                 className="btn btn-large" 
                 onClick={handleSystemBackup}
               >
-                システムバックアップ
+                {t('admin.functions.systemManagement.button')}
               </button>
             </div>
           </div>
@@ -285,7 +287,7 @@ const Admin = () => {
         
         {/* 最近のアクティビティ */}
         <div className="recent-activities">
-          <h2>最近のアクティビティ</h2>
+          <h2>{t('admin.recentActivities.title')}</h2>
           <div className="activity-list">
             {recentActivities.map((activity) => (
               <div key={activity.id} className="activity-item">
@@ -309,10 +311,10 @@ const Admin = () => {
         
         {/* システム設定 */}
         <div className="system-settings" id="system-settings-section">
-          <h2>システム設定</h2>
+          <h2>{t('admin.systemSettings.title')}</h2>
           <div className="form-card">
             <div className="form-group">
-              <label className="form-label">会社名</label>
+              <label className="form-label">{t('admin.systemSettings.companyName')}</label>
               <input
                 type="text"
                 className="form-input"
@@ -333,7 +335,7 @@ const Admin = () => {
             </div>
             
             <div className="form-group">
-              <label className="form-label">QRコード有効期限（時間）</label>
+              <label className="form-label">{t('admin.systemSettings.qrCodeExpiry')}</label>
               <input
                 type="number"
                 className="form-input"
@@ -352,7 +354,7 @@ const Admin = () => {
                   onChange={(e) => handleSettingChange('autoBackup', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
-                自動バックアップを有効にする
+                {t('admin.systemSettings.enableAutoBackup')}
               </label>
             </div>
             
@@ -364,7 +366,7 @@ const Admin = () => {
                   onChange={(e) => handleSettingChange('notificationEnabled', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
-                Teams通知を有効にする
+                {t('admin.systemSettings.enableTeamsNotification')}
               </label>
             </div>
             
@@ -376,11 +378,11 @@ const Admin = () => {
                   onChange={(e) => handleSettingChange('faceRecognitionEnabled', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
-                顔認証機能を有効にする
+                {t('admin.systemSettings.enableFaceRecognition')}
               </label>
             </div>
             
-            <h4 style={{ marginTop: '20px', marginBottom: '15px', color: '#333' }}>メニュー表示設定</h4>
+            <h4 style={{ marginTop: '20px', marginBottom: '15px', color: '#333' }}>{t('admin.systemSettings.menuDisplaySettings')}</h4>
             
             <div className="form-group">
               <label className="form-label">
@@ -390,7 +392,7 @@ const Admin = () => {
                   onChange={(e) => handleSettingChange('showDailyVisitorMenu', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
-                日常来訪者メニューを表示する
+                {t('admin.systemSettings.showDailyVisitorMenu')}
               </label>
             </div>
             
@@ -402,7 +404,7 @@ const Admin = () => {
                   onChange={(e) => handleSettingChange('showEventReceptionMenu', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
-                イベント受付メニューを表示する
+                {t('admin.systemSettings.showEventReceptionMenu')}
               </label>
             </div>
             
@@ -414,7 +416,7 @@ const Admin = () => {
                   onChange={(e) => handleSettingChange('showEmployeeMenu', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
-                社員用メニューを表示する
+                {t('admin.systemSettings.showEmployeeMenu')}
               </label>
             </div>
             
@@ -426,7 +428,7 @@ const Admin = () => {
                   onChange={(e) => handleSettingChange('showDeliveryMenu', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
-                配送業者メニューを表示する
+                {t('admin.systemSettings.showDeliveryMenu')}
               </label>
             </div>
             
@@ -438,13 +440,13 @@ const Admin = () => {
                   onChange={(e) => handleSettingChange('showInterviewerMenu', e.target.checked)}
                   style={{ marginRight: '8px' }}
                 />
-                面接者メニューを表示する
+                {t('admin.systemSettings.showInterviewerMenu')}
               </label>
             </div>
             
             <div className="text-center">
               <button className="btn btn-large" onClick={saveSettings}>
-                設定を保存
+                {t('admin.systemSettings.saveSettings')}
               </button>
             </div>
           </div>
@@ -452,17 +454,17 @@ const Admin = () => {
         
         {/* システム情報 */}
         <div className="system-info">
-          <h2>システム情報</h2>
+          <h2>{t('admin.systemInfo.title')}</h2>
           <div className="grid grid-2">
             <div className="info-card">
-              <h4>今月の統計</h4>
-              <p>総来訪者数: {stats.totalVisitorsThisMonth}名</p>
-              <p>総イベント数: {stats.totalEventsThisMonth}件</p>
+              <h4>{t('admin.systemInfo.monthlyStats')}</h4>
+              <p>{t('admin.systemInfo.totalVisitors', { count: stats.totalVisitorsThisMonth })}</p>
+              <p>{t('admin.systemInfo.totalEvents', { count: stats.totalEventsThisMonth })}</p>
             </div>
             <div className="info-card">
-              <h4>システム状態</h4>
-              <p>稼働率: {stats.systemUptime}</p>
-              <p>バージョン: 1.0.0</p>
+              <h4>{t('admin.systemInfo.systemStatus')}</h4>
+              <p>{t('admin.systemInfo.uptime', { uptime: stats.systemUptime })}</p>
+              <p>{t('admin.systemInfo.version')}</p>
             </div>
           </div>
         </div>

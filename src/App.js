@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './App.css';
+import './i18n';
 import Login from './components/Login';
 import Home from './components/Home';
 import DailyVisitor from './components/DailyVisitor';
@@ -12,17 +14,19 @@ import DeliveryPersonnel from './components/DeliveryPersonnel';
 import Interviewer from './components/Interviewer';
 import Admin from './components/Admin';
 import EventManagement from './components/EventManagement';
+import LanguageSwitcher from './components/LanguageSwitcher';
 
 // Admin Button Component
 const AdminButton = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   
   const handleAdminClick = () => {
     navigate('/admin');
   };
   
   return (
-    <button onClick={handleAdminClick} className="admin-button">
+    <button onClick={handleAdminClick} className="admin-button" title={t('header.adminPanel')}>
       ⚙️
     </button>
   );
@@ -31,6 +35,7 @@ const AdminButton = () => {
 function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   // Check for existing session on app load
   useEffect(() => {
@@ -92,10 +97,11 @@ function App() {
               <img src="/beyondsoft-logo.svg" alt="BEYONDSOFT" className="header-logo" />
             </div>
             <div className="user-info">
-              <span>ようこそ、{user.username}さん</span>
+              <span>{t('header.welcome')}、{user.username}さん</span>
+              <LanguageSwitcher />
               <AdminButton />
               <button onClick={handleLogout} className="logout-button">
-                ログアウト
+                {t('common.logout')}
               </button>
             </div>
           </div>

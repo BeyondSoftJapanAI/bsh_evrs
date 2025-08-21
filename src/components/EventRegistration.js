@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import registrationService from '../services/registrationService';
 import emailService from '../services/emailService';
 
 const EventRegistration = () => {
   const { eventId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState('event-list'); // event-list, registration-form, confirmation
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [eventRegistrations, setEventRegistrations] = useState({});
@@ -278,16 +280,16 @@ const EventRegistration = () => {
   return (
     <div className="main-content">
       <button className="back-button" onClick={() => navigate('/')}>
-        ← ホーム
+        {t('common.backToHome')}
       </button>
       
       <div className="container">
-        <h1 className="page-title">イベント申し込み</h1>
+        <h1 className="page-title">{t('eventRegistration.title')}</h1>
         
         {step === 'event-list' && (
           <div className="events-container">
             <div className="alert alert-info mb-4">
-              参加をご希望のイベントを選択してください。申し込み完了後、QRコードをお送りいたします。
+              {t('eventRegistration.selectEventMessage')}
             </div>
             
             <div className="events-grid">
@@ -297,35 +299,35 @@ const EventRegistration = () => {
                     <h3 className="event-title">{event.name}</h3>
                     <div className="event-status">
                       {isEventFull(event) ? (
-                        <span className="status-full">満員</span>
+                        <span className="status-full">{t('eventRegistration.statusFull')}</span>
                       ) : isRegistrationDeadlinePassed(event.registrationDeadline) ? (
-                        <span className="status-closed">受付終了</span>
+                        <span className="status-closed">{t('eventRegistration.statusClosed')}</span>
                       ) : (
-                        <span className="status-available">受付中</span>
+                        <span className="status-available">{t('eventRegistration.statusAvailable')}</span>
                       )}
                     </div>
                   </div>
                   
                   <div className="event-details">
-                    <p><strong>日時:</strong> {event.date} {event.time}</p>
-                    <p><strong>会場:</strong> {event.location}</p>
-                    <p><strong>定員:</strong> {event.capacity}名</p>
+                    <p><strong>{t('eventRegistration.dateTime')}:</strong> {event.date} {event.time}</p>
+                    <p><strong>{t('eventRegistration.venue')}:</strong> {event.location}</p>
+                    <p><strong>{t('eventRegistration.capacity')}:</strong> {event.capacity}{t('eventRegistration.people')}</p>
                     {eventRegistrations[event.id] ? (
                       <>
-                        <p><strong>申込状況:</strong> {eventRegistrations[event.id].current}/{event.capacity}名 
+                        <p><strong>{t('eventRegistration.registrationStatus')}:</strong> {eventRegistrations[event.id].current}/{event.capacity}{t('eventRegistration.people')} 
                           <span className="available-spots">
-                            （残り{eventRegistrations[event.id].available}名）
+                            （{t('eventRegistration.remaining')}{eventRegistrations[event.id].available}{t('eventRegistration.people')}）
                           </span>
                         </p>
                       </>
                     ) : (
-                      <p><strong>申込状況:</strong> {event.registrations}/{event.capacity}名 
+                      <p><strong>{t('eventRegistration.registrationStatus')}:</strong> {event.registrations}/{event.capacity}{t('eventRegistration.people')} 
                         <span className="available-spots">
-                          （残り{getAvailableSpots(event)}名）
+                          （{t('eventRegistration.remaining')}{getAvailableSpots(event)}{t('eventRegistration.people')}）
                         </span>
                       </p>
                     )}
-                    <p><strong>申込締切:</strong> {event.registrationDeadline}</p>
+                    <p><strong>{t('eventRegistration.registrationDeadline')}:</strong> {event.registrationDeadline}</p>
                   </div>
                   
                   <div className="event-description">
@@ -334,7 +336,7 @@ const EventRegistration = () => {
                   
                   {event.agenda && (
                     <div className="event-agenda">
-                      <h4>プログラム</h4>
+                      <h4>{t('eventRegistration.program')}</h4>
                       <ul>
                         {event.agenda.map((item, index) => (
                           <li key={index}>{item}</li>
@@ -349,9 +351,9 @@ const EventRegistration = () => {
                       onClick={() => handleEventSelect(event)}
                       disabled={!canRegister(event)}
                     >
-                      {eventRegistrations[event.id] && eventRegistrations[event.id].available <= 0 ? '満員' : 
-                       isRegistrationDeadlinePassed(event.registrationDeadline) ? '受付終了' : 
-                       '申し込む'}
+                      {eventRegistrations[event.id] && eventRegistrations[event.id].available <= 0 ? t('eventRegistration.statusFull') : 
+                       isRegistrationDeadlinePassed(event.registrationDeadline) ? t('eventRegistration.statusClosed') : 
+                       t('eventRegistration.applyButton')}
                     </button>
                   </div>
                 </div>
@@ -364,136 +366,136 @@ const EventRegistration = () => {
           <div className="registration-container">
             <div className="event-summary">
               <h2>{selectedEvent.name}</h2>
-              <p><strong>日時:</strong> {selectedEvent.date} {selectedEvent.time}</p>
-              <p><strong>会場:</strong> {selectedEvent.location}</p>
-              <p><strong>残席:</strong> {getAvailableSpots(selectedEvent)}名</p>
+              <p><strong>{t('eventRegistration.dateTime')}:</strong> {selectedEvent.date} {selectedEvent.time}</p>
+              <p><strong>{t('eventRegistration.venue')}:</strong> {selectedEvent.location}</p>
+              <p><strong>{t('eventRegistration.remainingSeats')}:</strong> {getAvailableSpots(selectedEvent)}{t('eventRegistration.people')}</p>
             </div>
             
             <div className="form-container">
               <div className="form-card">
-                <h3 className="text-large mb-4 text-center">申込者情報入力</h3>
+                <h3 className="text-large mb-4 text-center">{t('eventRegistration.applicantInfoInput')}</h3>
                 
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">姓 *</label>
+                    <label className="form-label">{t('eventRegistration.lastName')} *</label>
                     <input
                       type="text"
                       className="form-input"
                       value={registrationData.lastName}
                       onChange={(e) => handleInputChange('lastName', e.target.value)}
-                      placeholder="山田"
+                      placeholder={t('eventRegistration.lastNamePlaceholder')}
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">名 *</label>
+                    <label className="form-label">{t('eventRegistration.firstName')} *</label>
                     <input
                       type="text"
                       className="form-input"
                       value={registrationData.firstName}
                       onChange={(e) => handleInputChange('firstName', e.target.value)}
-                      placeholder="太郎"
+                      placeholder={t('eventRegistration.firstNamePlaceholder')}
                     />
                   </div>
                 </div>
                 
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">姓（カナ） *</label>
+                    <label className="form-label">{t('eventRegistration.lastNameKana')} *</label>
                     <input
                       type="text"
                       className="form-input"
                       value={registrationData.lastNameKana}
                       onChange={(e) => handleInputChange('lastNameKana', e.target.value)}
-                      placeholder="ヤマダ"
+                      placeholder={t('eventRegistration.lastNameKanaPlaceholder')}
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">名（カナ） *</label>
+                    <label className="form-label">{t('eventRegistration.firstNameKana')} *</label>
                     <input
                       type="text"
                       className="form-input"
                       value={registrationData.firstNameKana}
                       onChange={(e) => handleInputChange('firstNameKana', e.target.value)}
-                      placeholder="タロウ"
+                      placeholder={t('eventRegistration.firstNameKanaPlaceholder')}
                     />
                   </div>
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">メールアドレス *</label>
+                  <label className="form-label">{t('eventRegistration.email')} *</label>
                   <input
                     type="email"
                     className="form-input"
                     value={registrationData.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="example@company.com"
+                    placeholder={t('eventRegistration.emailPlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">電話番号 *</label>
+                  <label className="form-label">{t('eventRegistration.phone')} *</label>
                   <input
                     type="tel"
                     className="form-input"
                     value={registrationData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    placeholder="03-1234-5678"
+                    placeholder={t('eventRegistration.phonePlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">会社名 *</label>
+                  <label className="form-label">{t('eventRegistration.company')} *</label>
                   <input
                     type="text"
                     className="form-input"
                     value={registrationData.company}
                     onChange={(e) => handleInputChange('company', e.target.value)}
-                    placeholder="株式会社サンプル"
+                    placeholder={t('eventRegistration.companyPlaceholder')}
                   />
                 </div>
                 
                 <div className="form-row">
                   <div className="form-group">
-                    <label className="form-label">部署</label>
+                    <label className="form-label">{t('eventRegistration.department')}</label>
                     <input
                       type="text"
                       className="form-input"
                       value={registrationData.department}
                       onChange={(e) => handleInputChange('department', e.target.value)}
-                      placeholder="営業部"
+                      placeholder={t('eventRegistration.departmentPlaceholder')}
                     />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">役職</label>
+                    <label className="form-label">{t('eventRegistration.position')}</label>
                     <input
                       type="text"
                       className="form-input"
                       value={registrationData.position}
                       onChange={(e) => handleInputChange('position', e.target.value)}
-                      placeholder="課長"
+                      placeholder={t('eventRegistration.positionPlaceholder')}
                     />
                   </div>
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">食事制限・アレルギー</label>
+                  <label className="form-label">{t('eventRegistration.dietaryRestrictions')}</label>
                   <input
                     type="text"
                     className="form-input"
                     value={registrationData.dietaryRestrictions}
                     onChange={(e) => handleInputChange('dietaryRestrictions', e.target.value)}
-                    placeholder="特になし"
+                    placeholder={t('eventRegistration.dietaryRestrictionsPlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">備考</label>
+                  <label className="form-label">{t('eventRegistration.notes')}</label>
                   <textarea
                     className="form-input"
                     rows="3"
                     value={registrationData.notes}
                     onChange={(e) => handleInputChange('notes', e.target.value)}
-                    placeholder="ご質問やご要望がございましたらご記入ください"
+                    placeholder={t('eventRegistration.notesPlaceholder')}
                   />
                 </div>
                 
@@ -502,7 +504,7 @@ const EventRegistration = () => {
                     className="btn btn-secondary"
                     onClick={() => setStep('event-list')}
                   >
-                    戻る
+                    {t('common.back')}
                   </button>
                   <button
                     className="btn btn-large"
@@ -511,7 +513,7 @@ const EventRegistration = () => {
                              !registrationData.lastNameKana || !registrationData.firstNameKana ||
                              !registrationData.email || !registrationData.phone || !registrationData.company}
                   >
-                    申し込み完了
+                    {t('eventRegistration.submitRegistration')}
                   </button>
                 </div>
               </div>
@@ -522,60 +524,57 @@ const EventRegistration = () => {
         {step === 'confirmation' && (
           <div className="confirmation-container">
             <div className="form-card">
-              <h2 className="text-large mb-4 text-center">申し込み完了</h2>
+              <h2 className="text-large mb-4 text-center">{t('eventRegistration.registrationCompleted')}</h2>
               
               <div className="alert alert-success">
-                イベントの申し込みが完了しました。確認メールとQRコードをお送りしました。
+                {t('eventRegistration.registrationCompletedMessage')}
               </div>
               
               <div className="registration-summary">
-                <h3>申込内容</h3>
+                <h3>{t('eventRegistration.registrationDetails')}</h3>
                 <div className="summary-grid">
                   <div className="summary-item">
-                    <strong>申込ID:</strong> {registrationId}
+                    <strong>{t('eventRegistration.registrationId')}:</strong> {registrationId}
                   </div>
                   <div className="summary-item">
-                    <strong>イベント名:</strong> {selectedEvent.name}
+                    <strong>{t('eventRegistration.eventName')}:</strong> {selectedEvent.name}
                   </div>
                   <div className="summary-item">
-                    <strong>日時:</strong> {selectedEvent.date} {selectedEvent.time}
+                    <strong>{t('eventRegistration.dateTime')}:</strong> {selectedEvent.date} {selectedEvent.time}
                   </div>
                   <div className="summary-item">
-                    <strong>会場:</strong> {selectedEvent.location}
+                    <strong>{t('eventRegistration.venue')}:</strong> {selectedEvent.location}
                   </div>
                   <div className="summary-item">
-                    <strong>申込者:</strong> {registrationData.lastName} {registrationData.firstName}
+                    <strong>{t('eventRegistration.applicant')}:</strong> {registrationData.lastName} {registrationData.firstName}
                   </div>
                   <div className="summary-item">
-                    <strong>会社名:</strong> {registrationData.company}
+                    <strong>{t('eventRegistration.company')}:</strong> {registrationData.company}
                   </div>
                   <div className="summary-item">
-                    <strong>メール:</strong> {registrationData.email}
+                    <strong>{t('eventRegistration.email')}:</strong> {registrationData.email}
                   </div>
                 </div>
               </div>
               
               <div className="qr-code-section">
-                <h3>受付用QRコード</h3>
+                <h3>{t('eventRegistration.receptionQRCode')}</h3>
                 <div className="qr-code-container">
-                  <img src={qrCode} alt="受付用QRコード" className="qr-code-image" />
+                  <img src={qrCode} alt={t('eventRegistration.receptionQRCode')} className="qr-code-image" />
                   <p className="qr-code-note">
-                    当日受付時にこのQRコードをご提示ください。<br/>
-                    メールでも同じQRコードをお送りしています。
+                    {t('eventRegistration.qrCodeNote')}
                   </p>
                 </div>
               </div>
               
               <div className="alert alert-info">
-                <strong>当日のご案内</strong><br/>
-                ・開始時刻の15分前までにお越しください<br/>
-                ・受付でQRコードをご提示ください<br/>
-                ・ご不明な点は {selectedEvent.contactEmail} までお問い合わせください
+                <strong>{t('eventRegistration.eventDayGuide')}</strong><br/>
+                {t('eventRegistration.eventDayInstructions', { contactEmail: selectedEvent.contactEmail })}
               </div>
               
               <div className="text-center mt-4">
                 <button className="btn btn-large" onClick={handleReset}>
-                  他のイベントを見る
+                  {t('eventRegistration.viewOtherEvents')}
                 </button>
               </div>
             </div>

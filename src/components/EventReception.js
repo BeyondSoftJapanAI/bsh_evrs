@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import registrationService from '../services/registrationService';
 
 const EventReception = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState('select'); // select, qr-scan, no-qr, business-card, manual, confirm
   const [receptionType, setReceptionType] = useState('');
   const [qrData, setQrData] = useState(null);
@@ -212,7 +214,7 @@ const EventReception = () => {
   }, []);
 
   const renderStepIndicator = () => {
-    const steps = ['選択', 'スキャン/入力', '確認'];
+    const steps = [t('eventReception.stepSelect'), t('eventReception.stepScanInput'), t('eventReception.stepConfirm')];
     const currentStepIndex = {
       'select': 0,
       'qr-scan': 1,
@@ -242,11 +244,11 @@ const EventReception = () => {
   return (
     <div className="main-content">
       <button className="back-button" onClick={() => navigate('/')}>
-        ← ホーム
+        {t('common.backToHome')}
       </button>
       
       <div className="container">
-        <h1 className="page-title">イベント受付</h1>
+        <h1 className="page-title">{t('eventReception.title')}</h1>
         
         <div className="form-container">
           <div className="form-card">
@@ -254,19 +256,19 @@ const EventReception = () => {
             
             {step === 'select' && (
               <div className="text-center">
-                <h2 className="text-large mb-4">受付方法を選択してください</h2>
+                <h2 className="text-large mb-4">{t('eventReception.selectReceptionMethod')}</h2>
                 <div className="grid grid-2">
                   <button
                     className="btn btn-large"
                     onClick={() => handleReceptionTypeSelect('qr')}
                   >
-                    📱 QRコードあり
+                    📱 {t('eventReception.withQR')}
                   </button>
                   <button
                     className="btn btn-large btn-secondary"
                     onClick={() => handleReceptionTypeSelect('no-qr')}
                   >
-                    📄 QRコードなし
+                    📄 {t('eventReception.withoutQR')}
                   </button>
                 </div>
               </div>
@@ -274,7 +276,7 @@ const EventReception = () => {
             
             {step === 'qr-scan' && (
               <div className="text-center">
-                <h2 className="text-large mb-4">QRコードをスキャンしてください</h2>
+                <h2 className="text-large mb-4">{t('eventReception.scanQRCode')}</h2>
                 
                 <div className="qr-scanner">
                   {isScanning ? (
@@ -293,17 +295,17 @@ const EventReception = () => {
                       border: '2px dashed #dee2e6',
                       borderRadius: '8px'
                     }}>
-                      <p>カメラを起動中...</p>
+                      <p>{t('eventReception.startingCamera')}</p>
                     </div>
                   )}
                 </div>
                 
                 <div className="mt-4">
                   <button className="btn" onClick={simulateQRScan}>
-                    QRコード読み取りテスト
+                    {t('eventReception.qrScanTest')}
                   </button>
                   <button className="btn btn-secondary" onClick={() => setStep('select')} style={{ marginLeft: '10px' }}>
-                    戻る
+                    {t('common.back')}
                   </button>
                 </div>
               </div>
@@ -311,30 +313,30 @@ const EventReception = () => {
             
             {step === 'no-qr' && (
               <div className="text-center">
-                <h2 className="text-large mb-4">受付方法を選択してください</h2>
+                <h2 className="text-large mb-4">{t('eventReception.selectReceptionMethod')}</h2>
                 <div className="grid grid-2">
                   <button
                     className="btn btn-large"
                     onClick={() => handleNoQRSelect('business-card')}
                   >
-                    💳 名刺あり
+                    💳 {t('eventReception.withBusinessCard')}
                   </button>
                   <button
                     className="btn btn-large btn-secondary"
                     onClick={() => handleNoQRSelect('manual')}
                   >
-                    ✏️ 名刺なし（手入力）
+                    ✏️ {t('eventReception.withoutBusinessCard')}
                   </button>
                 </div>
                 <button className="btn btn-warning mt-4" onClick={() => setStep('select')}>
-                  戻る
+                  {t('common.back')}
                 </button>
               </div>
             )}
             
             {step === 'business-card' && (
               <div className="text-center">
-                <h2 className="text-large mb-4">名刺をスキャンしてください</h2>
+                <h2 className="text-large mb-4">{t('eventReception.scanBusinessCard')}</h2>
                 
                 <div style={{
                   width: '100%',
@@ -347,49 +349,49 @@ const EventReception = () => {
                   justifyContent: 'center',
                   margin: '20px 0'
                 }}>
-                  <p>名刺をスキャナーに置いてください</p>
+                  <p>{t('eventReception.placeBusinessCard')}</p>
                 </div>
                 
                 <div className="alert alert-info">
-                  スキャン完了後、名刺をネームホルダーに入れてください。
+                  {t('eventReception.businessCardInstruction')}
                 </div>
               </div>
             )}
             
             {step === 'manual' && (
               <div>
-                <h2 className="text-large mb-4 text-center">参加者情報入力</h2>
+                <h2 className="text-large mb-4 text-center">{t('eventReception.participantInfoInput')}</h2>
                 
                 <div className="form-group">
-                  <label className="form-label">会社名 *</label>
+                  <label className="form-label">{t('eventReception.companyName')} *</label>
                   <input
                     type="text"
                     className="form-input"
                     value={participantInfo.company}
                     onChange={(e) => handleInputChange('company', e.target.value)}
-                    placeholder="株式会社サンプル"
+                    placeholder={t('eventReception.companyPlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">お名前 *</label>
+                  <label className="form-label">{t('eventReception.name')} *</label>
                   <input
                     type="text"
                     className="form-input"
                     value={participantInfo.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="山田太郎"
+                    placeholder={t('eventReception.namePlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">役職</label>
+                  <label className="form-label">{t('eventReception.title')}</label>
                   <input
                     type="text"
                     className="form-input"
                     value={participantInfo.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
-                    placeholder="営業部長"
+                    placeholder={t('eventReception.titlePlaceholder')}
                   />
                 </div>
                 
@@ -398,21 +400,21 @@ const EventReception = () => {
                   onClick={handleManualConfirm}
                   disabled={!participantInfo.company || !participantInfo.name}
                 >
-                  受付完了
+                  {t('eventReception.receptionComplete')}
                 </button>
                 
                 <button className="btn btn-secondary" onClick={() => setStep('no-qr')} style={{ marginLeft: '10px' }}>
-                  戻る
+                  {t('common.back')}
                 </button>
               </div>
             )}
             
             {step === 'confirm' && (
               <div>
-                <h2 className="text-large mb-4 text-center">受付完了</h2>
+                <h2 className="text-large mb-4 text-center">{t('eventReception.receptionCompleted')}</h2>
                 
                 <div className="alert alert-success">
-                  受付が完了しました。ネームシールを発行しています。
+                  {t('eventReception.receptionCompletedMessage')}
                 </div>
                 
                 <div className="name-tag">
@@ -427,25 +429,25 @@ const EventReception = () => {
                 </div>
                 
                 <div className="visitor-info">
-                  <h3>受付情報</h3>
-                  <p><strong>会社名:</strong> {participantInfo.company}</p>
-                  <p><strong>お名前:</strong> {participantInfo.name}</p>
-                  <p><strong>役職:</strong> {participantInfo.title}</p>
+                  <h3>{t('eventReception.receptionInfo')}</h3>
+                  <p><strong>{t('eventReception.companyName')}:</strong> {participantInfo.company}</p>
+                  <p><strong>{t('eventReception.name')}:</strong> {participantInfo.name}</p>
+                  <p><strong>{t('eventReception.title')}:</strong> {participantInfo.title}</p>
                   {participantInfo.eventName && (
-                    <p><strong>イベント:</strong> {participantInfo.eventName}</p>
+                    <p><strong>{t('eventReception.event')}:</strong> {participantInfo.eventName}</p>
                   )}
                   {participantInfo.registrationId && (
-                    <p><strong>登録ID:</strong> {participantInfo.registrationId}</p>
+                    <p><strong>{t('eventReception.registrationId')}:</strong> {participantInfo.registrationId}</p>
                   )}
-                  <p><strong>受付時刻:</strong> {new Date().toLocaleString('ja-JP')}</p>
+                  <p><strong>{t('eventReception.receptionTime')}:</strong> {new Date().toLocaleString('ja-JP')}</p>
                 </div>
                 
                 <div className="text-center mt-4">
                   <button className="btn btn-large" onClick={handleReset}>
-                    新しい受付
+                    {t('eventReception.newReception')}
                   </button>
                   <button className="btn btn-secondary" onClick={exportHistory} style={{ marginLeft: '10px' }}>
-                    履歴エクスポート
+                    {t('eventReception.exportHistory')}
                   </button>
                 </div>
               </div>

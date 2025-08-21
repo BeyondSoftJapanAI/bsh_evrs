@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const DailyVisitor = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState('select'); // select, appointment, no-appointment, scan, input, confirm
   const [visitorType, setVisitorType] = useState('');
   const [selectedStaff, setSelectedStaff] = useState('');
@@ -75,6 +77,10 @@ const DailyVisitor = () => {
 
   const handleConfirm = () => {
     setStep('confirm');
+  };
+
+  const handleSubmit = () => {
+    setStep('complete');
     // Teams通知を送信（模擬）
     sendTeamsNotification();
   };
@@ -86,7 +92,7 @@ const DailyVisitor = () => {
       timestamp: new Date().toLocaleString('ja-JP'),
       type: visitorType
     };
-    console.log('Teams通知送信:', message);
+    console.log(t('dailyVisitor.teamsNotificationSent'), message);
     // 実際の実装では、Teams APIを使用
   };
 
@@ -108,7 +114,7 @@ const DailyVisitor = () => {
   };
 
   const renderStepIndicator = () => {
-    const steps = ['選択', 'スタッフ', 'スキャン', '入力', '確認'];
+    const steps = [t('dailyVisitor.steps.select'), t('dailyVisitor.steps.staff'), t('dailyVisitor.steps.scan'), t('dailyVisitor.steps.input'), t('dailyVisitor.steps.confirm')];
     const currentStepIndex = {
       'select': 0,
       'appointment': 1,
@@ -138,11 +144,11 @@ const DailyVisitor = () => {
   return (
     <div className="main-content">
       <button className="back-button" onClick={() => navigate('/')}>
-        ← ホーム
+        ← {t('common.home')}
       </button>
       
       <div className="container">
-        <h1 className="page-title">日常来訪者受付</h1>
+        <h1 className="page-title">{t('dailyVisitor.title')}</h1>
         
         <div className="form-container">
           <div className="form-card">
@@ -150,19 +156,19 @@ const DailyVisitor = () => {
             
             {step === 'select' && (
               <div className="text-center">
-                <h2 className="text-large mb-4">来訪タイプを選択してください</h2>
+                <h2 className="text-large mb-4">{t('dailyVisitor.selectVisitType')}</h2>
                 <div className="grid grid-2">
                   <button
                     className="btn btn-large"
                     onClick={() => handleVisitorTypeSelect('appointment')}
                   >
-                    📅 アポあり
+                    📅 {t('dailyVisitor.withAppointment')}
                   </button>
                   <button
                     className="btn btn-large btn-secondary"
                     onClick={() => handleVisitorTypeSelect('no-appointment')}
                   >
-                    🔍 アポなし（担当者探し）
+                    🔍 {t('dailyVisitor.withoutAppointment')}
                   </button>
                 </div>
               </div>
@@ -170,7 +176,7 @@ const DailyVisitor = () => {
             
             {step === 'appointment' && (
               <div>
-                <h2 className="text-large mb-4 text-center">担当者を選択してください</h2>
+                <h2 className="text-large mb-4 text-center">{t('dailyVisitor.selectStaff')}</h2>
                 <div className="grid grid-2">
                   {staffMembers.map((staff) => (
                     <div
@@ -189,24 +195,24 @@ const DailyVisitor = () => {
             
             {step === 'no-appointment' && (
               <div>
-                <h2 className="text-large mb-4 text-center">担当者を検索してください</h2>
+                <h2 className="text-large mb-4 text-center">{t('dailyVisitor.searchStaff')}</h2>
                 <div className="form-group">
-                  <label className="form-label">名前または部署名</label>
+                  <label className="form-label">{t('dailyVisitor.nameOrDepartment')}</label>
                   <input
                     type="text"
                     className="form-input"
                     value={searchName}
                     onChange={(e) => setSearchName(e.target.value)}
-                    placeholder="例：田中、営業部"
+                    placeholder={t('dailyVisitor.searchPlaceholder')}
                   />
                 </div>
                 <button className="btn" onClick={handleSearchStaff}>
-                  検索
+                  {t('dailyVisitor.search')}
                 </button>
                 
                 {searchResults.length > 0 && (
                   <div className="mt-4">
-                    <h3>検索結果</h3>
+                    <h3>{t('dailyVisitor.searchResults')}</h3>
                     <div className="grid grid-2">
                       {searchResults.map((staff) => (
                         <div
@@ -227,21 +233,21 @@ const DailyVisitor = () => {
             
             {step === 'scan' && (
               <div className="text-center">
-                <h2 className="text-large mb-4">名刺情報の取得</h2>
-                <p className="mb-4">担当者: {selectedStaff.name} ({selectedStaff.department})</p>
+                <h2 className="text-large mb-4">{t('dailyVisitor.getBusinessCardInfo')}</h2>
+                <p className="mb-4">{t('dailyVisitor.staffMember')}: {selectedStaff.name} ({selectedStaff.department})</p>
                 
                 <div className="grid grid-2">
                   <button
                     className="btn btn-large"
                     onClick={handleBusinessCardScan}
                   >
-                    📷 名刺スキャン
+                    📷 {t('dailyVisitor.scanBusinessCard')}
                   </button>
                   <button
                     className="btn btn-large btn-secondary"
                     onClick={handleManualInput}
                   >
-                    ✏️ 手入力
+                    ✏️ {t('dailyVisitor.manualInput')}
                   </button>
                 </div>
               </div>
@@ -249,65 +255,65 @@ const DailyVisitor = () => {
             
             {step === 'input' && (
               <div>
-                <h2 className="text-large mb-4 text-center">来訪者情報入力</h2>
+                <h2 className="text-large mb-4 text-center">{t('dailyVisitor.inputVisitorInfo')}</h2>
                 
                 <div className="form-group">
-                  <label className="form-label">会社名 *</label>
+                  <label className="form-label">{t('dailyVisitor.form.company')} *</label>
                   <input
                     type="text"
                     className="form-input"
                     value={visitorInfo.company}
                     onChange={(e) => handleInputChange('company', e.target.value)}
-                    placeholder="株式会社サンプル"
+                    placeholder={t('dailyVisitor.form.companyPlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">お名前 *</label>
+                  <label className="form-label">{t('dailyVisitor.form.name')} *</label>
                   <input
                     type="text"
                     className="form-input"
                     value={visitorInfo.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="山田太郎"
+                    placeholder={t('dailyVisitor.form.namePlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">役職</label>
+                  <label className="form-label">{t('dailyVisitor.form.title')}</label>
                   <input
                     type="text"
                     className="form-input"
                     value={visitorInfo.title}
                     onChange={(e) => handleInputChange('title', e.target.value)}
-                    placeholder="営業部長"
+                    placeholder={t('dailyVisitor.form.titlePlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">電話番号</label>
+                  <label className="form-label">{t('dailyVisitor.form.phone')}</label>
                   <input
                     type="tel"
                     className="form-input"
                     value={visitorInfo.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    placeholder="03-1234-5678"
+                    placeholder={t('dailyVisitor.form.phonePlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">メールアドレス</label>
+                  <label className="form-label">{t('dailyVisitor.form.email')}</label>
                   <input
                     type="email"
                     className="form-input"
                     value={visitorInfo.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="yamada@sample.co.jp"
+                    placeholder={t('dailyVisitor.form.emailPlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">来訪人数 *</label>
+                  <label className="form-label">{t('dailyVisitor.form.visitorCount')} *</label>
                   <input
                     type="number"
                     className="form-input"
@@ -315,17 +321,18 @@ const DailyVisitor = () => {
                     onChange={(e) => handleInputChange('visitCount', parseInt(e.target.value))}
                     min="1"
                     max="20"
+                    placeholder={t('dailyVisitor.form.visitorCountPlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">来訪目的</label>
-                  <input
-                    type="text"
+                  <label className="form-label">{t('dailyVisitor.form.purpose')} *</label>
+                  <textarea
                     className="form-input"
                     value={visitorInfo.purpose}
                     onChange={(e) => handleInputChange('purpose', e.target.value)}
-                    placeholder="商談、打ち合わせ等"
+                    placeholder={t('dailyVisitor.form.purposePlaceholder')}
+                    rows="3"
                   />
                 </div>
                 
@@ -334,35 +341,97 @@ const DailyVisitor = () => {
                   onClick={handleConfirm}
                   disabled={!visitorInfo.company || !visitorInfo.name}
                 >
-                  確認画面へ
+                  {t('dailyVisitor.toConfirmation')}
                 </button>
               </div>
             )}
             
             {step === 'confirm' && (
               <div>
-                <h2 className="text-large mb-4 text-center">受付完了</h2>
+                <h2 className="text-large mb-4 text-center">{t('dailyVisitor.confirmationScreen')}</h2>
                 
-                <div className="alert alert-success">
-                  Teams通知を送信しました。担当者がお迎えに参ります。
+                <div className="visitor-info-card">
+                  <h3>{t('dailyVisitor.visitorInfo')}</h3>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.form.company')}:</span>
+                    <span className="info-value">{visitorInfo.company}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.form.name')}:</span>
+                    <span className="info-value">{visitorInfo.name}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.form.title')}:</span>
+                    <span className="info-value">{visitorInfo.title || t('dailyVisitor.notEntered')}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.form.visitorCount')}:</span>
+                    <span className="info-value">{visitorInfo.count}{t('dailyVisitor.people')}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.form.purpose')}:</span>
+                    <span className="info-value">{visitorInfo.purpose}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.staffMember')}:</span>
+                    <span className="info-value">{selectedStaff.name} ({selectedStaff.department})</span>
+                  </div>
                 </div>
                 
-                <div className="visitor-info">
-                  <h3>来訪者情報</h3>
-                  <p><strong>会社名:</strong> {visitorInfo.company}</p>
-                  <p><strong>お名前:</strong> {visitorInfo.name}</p>
-                  <p><strong>役職:</strong> {visitorInfo.title}</p>
-                  <p><strong>来訪人数:</strong> {visitorInfo.visitCount}名</p>
-                  <p><strong>来訪目的:</strong> {visitorInfo.purpose}</p>
-                  <p><strong>担当者:</strong> {selectedStaff.name} ({selectedStaff.department})</p>
-                  <p><strong>受付時刻:</strong> {new Date().toLocaleString('ja-JP')}</p>
-                </div>
-                
-                <div className="text-center mt-4">
-                  <button className="btn btn-large" onClick={handleReset}>
-                    新しい受付
+                <div className="grid grid-2 mt-4">
+                  <button className="btn btn-secondary" onClick={() => setStep('input')}>
+                    {t('dailyVisitor.back')}
+                  </button>
+                  <button className="btn" onClick={handleSubmit}>
+                    {t('dailyVisitor.completeReception')}
                   </button>
                 </div>
+              </div>
+            )}
+            
+            {step === 'complete' && (
+              <div className="text-center">
+                <h2 className="text-large mb-4">{t('dailyVisitor.receptionComplete')}</h2>
+                
+                <div className="alert alert-success mb-4">
+                  {t('dailyVisitor.teamsNotificationSent')}
+                </div>
+                
+                <div className="visitor-info-card">
+                  <h3>{t('dailyVisitor.visitorInfo')}</h3>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.form.company')}:</span>
+                    <span className="info-value">{visitorInfo.company}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.form.name')}:</span>
+                    <span className="info-value">{visitorInfo.name}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.form.title')}:</span>
+                    <span className="info-value">{visitorInfo.title || t('dailyVisitor.notEntered')}</span>
+                  </div>
+                  <div className="info-row">
+                     <span className="info-label">{t('dailyVisitor.form.visitorCount')}:</span>
+                     <span className="info-value">{visitorInfo.count}{t('dailyVisitor.people')}</span>
+                   </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.form.purpose')}:</span>
+                    <span className="info-value">{visitorInfo.purpose}</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.staffMember')}:</span>
+                    <span className="info-value">{selectedStaff.name} ({selectedStaff.department})</span>
+                  </div>
+                  <div className="info-row">
+                    <span className="info-label">{t('dailyVisitor.receptionTime')}:</span>
+                    <span className="info-value">{new Date().toLocaleString('ja-JP')}</span>
+                  </div>
+                </div>
+                
+                <button className="btn btn-large mt-4" onClick={handleReset}>
+                  {t('dailyVisitor.newReception')}
+                </button>
               </div>
             )}
           </div>

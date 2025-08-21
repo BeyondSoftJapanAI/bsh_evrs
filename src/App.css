@@ -47,7 +47,7 @@
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .user-info span {
@@ -84,7 +84,6 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
-  margin-right: 10px;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;

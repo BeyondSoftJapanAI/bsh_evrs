@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Interviewer = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState('input'); // input, confirm
   const [interviewInfo, setInterviewInfo] = useState({
     name: '',
@@ -83,59 +85,59 @@ const Interviewer = () => {
   return (
     <div className="main-content">
       <button className="back-button" onClick={() => navigate('/')}>
-        ← ホーム
+        {t('common.backToHome')}
       </button>
       
       <div className="container">
-        <h1 className="page-title">面接者受付</h1>
+        <h1 className="page-title">{t('interviewer.title')}</h1>
         
         <div className="form-container">
           <div className="form-card">
             {step === 'input' && (
               <div>
-                <h2 className="text-large mb-4 text-center">面接者情報入力</h2>
+                <h2 className="text-large mb-4 text-center">{t('interviewer.inputInfo')}</h2>
                 
                 <div className="form-group">
-                  <label className="form-label">お名前 *</label>
+                  <label className="form-label">{t('interviewer.form.name')} *</label>
                   <input
                     type="text"
                     className="form-input"
                     value={interviewInfo.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="山田太郎"
+                    placeholder={t('interviewer.form.namePlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">電話番号 *</label>
+                  <label className="form-label">{t('interviewer.form.phone')} *</label>
                   <input
                     type="tel"
                     className="form-input"
                     value={interviewInfo.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
-                    placeholder="090-1234-5678"
+                    placeholder={t('interviewer.form.phonePlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">メールアドレス</label>
+                  <label className="form-label">{t('interviewer.form.email')}</label>
                   <input
                     type="email"
                     className="form-input"
                     value={interviewInfo.email}
                     onChange={(e) => handleInputChange('email', e.target.value)}
-                    placeholder="yamada@example.com"
+                    placeholder={t('interviewer.form.emailPlaceholder')}
                   />
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">応募職種 *</label>
+                  <label className="form-label">{t('interviewer.form.position')} *</label>
                   <select
                     className="form-select"
                     value={interviewInfo.position}
                     onChange={(e) => handleInputChange('position', e.target.value)}
                   >
-                    <option value="">選択してください</option>
+                    <option value="">{t('interviewer.form.pleaseSelect')}</option>
                     {positions.map((position) => (
                       <option key={position} value={position}>{position}</option>
                     ))}
@@ -143,7 +145,7 @@ const Interviewer = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">面接予定時刻 *</label>
+                  <label className="form-label">{t('interviewer.form.interviewTime')} *</label>
                   <input
                     type="datetime-local"
                     className="form-input"
@@ -153,13 +155,13 @@ const Interviewer = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">面接官 *</label>
+                  <label className="form-label">{t('interviewer.form.interviewer')} *</label>
                   <select
                     className="form-select"
                     value={interviewInfo.interviewer}
                     onChange={(e) => handleInputChange('interviewer', e.target.value)}
                   >
-                    <option value="">選択してください</option>
+                    <option value="">{t('interviewer.form.pleaseSelect')}</option>
                     {interviewers.map((interviewer) => (
                       <option key={interviewer} value={interviewer}>{interviewer}</option>
                     ))}
@@ -167,13 +169,13 @@ const Interviewer = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">面接部署 *</label>
+                  <label className="form-label">{t('interviewer.form.department')} *</label>
                   <select
                     className="form-select"
                     value={interviewInfo.department}
                     onChange={(e) => handleInputChange('department', e.target.value)}
                   >
-                    <option value="">選択してください</option>
+                    <option value="">{t('interviewer.form.pleaseSelect')}</option>
                     {departments.map((department) => (
                       <option key={department} value={department}>{department}</option>
                     ))}
@@ -181,13 +183,13 @@ const Interviewer = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">備考</label>
+                  <label className="form-label">{t('interviewer.form.notes')}</label>
                   <textarea
                     className="form-input"
                     rows="3"
                     value={interviewInfo.notes}
                     onChange={(e) => handleInputChange('notes', e.target.value)}
-                    placeholder="特記事項があれば入力してください"
+                    placeholder={t('interviewer.form.notesPlaceholder')}
                   />
                 </div>
                 
@@ -196,43 +198,43 @@ const Interviewer = () => {
                   onClick={handleSubmit}
                   disabled={!interviewInfo.name || !interviewInfo.phone || !interviewInfo.position || !interviewInfo.interviewTime || !interviewInfo.interviewer || !interviewInfo.department}
                 >
-                  受付完了
+                  {t('interviewer.completeReception')}
                 </button>
               </div>
             )}
             
             {step === 'confirm' && (
               <div>
-                <h2 className="text-large mb-4 text-center">受付完了</h2>
+                <h2 className="text-large mb-4 text-center">{t('interviewer.receptionComplete')}</h2>
                 
                 <div className="alert alert-success">
-                  面接者の受付が完了しました。関係部署にTeams通知を送信しました。
+                  {t('interviewer.receptionCompleteMessage')}
                 </div>
                 
                 <div className="visitor-info">
-                  <h3>面接者情報</h3>
-                  <p><strong>お名前:</strong> {interviewInfo.name}</p>
-                  <p><strong>電話番号:</strong> {interviewInfo.phone}</p>
+                  <h3>{t('interviewer.interviewerInfo')}</h3>
+                  <p><strong>{t('interviewer.form.name')}:</strong> {interviewInfo.name}</p>
+                  <p><strong>{t('interviewer.form.phone')}:</strong> {interviewInfo.phone}</p>
                   {interviewInfo.email && (
-                    <p><strong>メールアドレス:</strong> {interviewInfo.email}</p>
+                    <p><strong>{t('interviewer.form.email')}:</strong> {interviewInfo.email}</p>
                   )}
-                  <p><strong>応募職種:</strong> {interviewInfo.position}</p>
-                  <p><strong>面接予定時刻:</strong> {new Date(interviewInfo.interviewTime).toLocaleString('ja-JP')}</p>
-                  <p><strong>面接官:</strong> {interviewInfo.interviewer}</p>
-                  <p><strong>面接部署:</strong> {interviewInfo.department}</p>
+                  <p><strong>{t('interviewer.form.position')}:</strong> {interviewInfo.position}</p>
+                  <p><strong>{t('interviewer.form.interviewTime')}:</strong> {new Date(interviewInfo.interviewTime).toLocaleString('ja-JP')}</p>
+                  <p><strong>{t('interviewer.form.interviewer')}:</strong> {interviewInfo.interviewer}</p>
+                  <p><strong>{t('interviewer.form.department')}:</strong> {interviewInfo.department}</p>
                   {interviewInfo.notes && (
-                    <p><strong>備考:</strong> {interviewInfo.notes}</p>
+                    <p><strong>{t('interviewer.form.notes')}:</strong> {interviewInfo.notes}</p>
                   )}
-                  <p><strong>受付時刻:</strong> {new Date().toLocaleString('ja-JP')}</p>
+                  <p><strong>{t('interviewer.receptionTime')}:</strong> {new Date().toLocaleString('ja-JP')}</p>
                 </div>
                 
                 <div className="alert alert-info">
-                  <strong>通知先:</strong> 総務部、営業部、DX推進部、財務部、人事部
+                  <strong>{t('interviewer.notificationTarget')}:</strong> {t('interviewer.notificationDepartments')}
                 </div>
                 
                 <div className="name-tag">
                   <h2>{interviewInfo.name}</h2>
-                  <p>面接者</p>
+                  <p>{t('interviewer.interviewerLabel')}</p>
                   <p>{interviewInfo.position}</p>
                   <p style={{ fontSize: '14px', marginTop: '10px' }}>
                     {new Date(interviewInfo.interviewTime).toLocaleString('ja-JP')}
@@ -241,7 +243,7 @@ const Interviewer = () => {
                 
                 <div className="text-center mt-4">
                   <button className="btn btn-large" onClick={handleReset}>
-                    新しい受付
+                    {t('interviewer.newReception')}
                   </button>
                 </div>
               </div>

@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const EmployeeAttendance = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState('select'); // select, face-recognition, correction, confirm
   const [attendanceType, setAttendanceType] = useState('');
   const [employee, setEmployee] = useState(null);
@@ -167,7 +169,7 @@ const EmployeeAttendance = () => {
   }, []);
 
   const renderStepIndicator = () => {
-    const steps = ['選択', '認証/入力', '確認'];
+    const steps = [t('employeeAttendance.stepSelect'), t('employeeAttendance.stepAuth'), t('employeeAttendance.stepConfirm')];
     const currentStepIndex = {
       'select': 0,
       'face-recognition': 1,
@@ -195,11 +197,11 @@ const EmployeeAttendance = () => {
   return (
     <div className="main-content">
       <button className="back-button" onClick={() => navigate('/')}>
-        ← ホーム
+        {t('common.backToHome')}
       </button>
       
       <div className="container">
-        <h1 className="page-title">社員用打刻システム</h1>
+        <h1 className="page-title">{t('employeeAttendance.title')}</h1>
         
         <div className="form-container">
           <div className="form-card">
@@ -207,7 +209,7 @@ const EmployeeAttendance = () => {
             
             {step === 'select' && (
               <div className="text-center">
-                <h2 className="text-large mb-4">打刻種別を選択してください</h2>
+                <h2 className="text-large mb-4">{t('employeeAttendance.selectType')}</h2>
                 
                 <div className="attendance-grid">
                   <div
@@ -215,7 +217,7 @@ const EmployeeAttendance = () => {
                     onClick={() => handleAttendanceTypeSelect('check-in')}
                   >
                     <span className="attendance-icon">🏢</span>
-                    <h3 className="attendance-title">入室</h3>
+                    <h3 className="attendance-title">{t('employeeAttendance.checkIn')}</h3>
                   </div>
                   
                   <div
@@ -223,7 +225,7 @@ const EmployeeAttendance = () => {
                     onClick={() => handleAttendanceTypeSelect('check-out')}
                   >
                     <span className="attendance-icon">🚪</span>
-                    <h3 className="attendance-title">退室</h3>
+                    <h3 className="attendance-title">{t('employeeAttendance.checkOut')}</h3>
                   </div>
                   
                   <div
@@ -231,13 +233,13 @@ const EmployeeAttendance = () => {
                     onClick={() => handleAttendanceTypeSelect('correction')}
                   >
                     <span className="attendance-icon">✏️</span>
-                    <h3 className="attendance-title">打刻修正</h3>
+                    <h3 className="attendance-title">{t('employeeAttendance.correction')}</h3>
                   </div>
                 </div>
                 
                 <div className="mt-4">
                   <button className="btn btn-secondary" onClick={exportAttendanceHistory}>
-                    履歴エクスポート
+                    {t('employeeAttendance.exportHistory')}
                   </button>
                 </div>
               </div>
@@ -246,9 +248,9 @@ const EmployeeAttendance = () => {
             {step === 'face-recognition' && (
               <div className="text-center">
                 <h2 className="text-large mb-4">
-                  {attendanceType === 'check-in' ? '入室' : '退室'}打刻
+                  {attendanceType === 'check-in' ? t('employeeAttendance.checkIn') : t('employeeAttendance.checkOut')}{t('employeeAttendance.attendance')}
                 </h2>
-                <p className="mb-4">顔認識を行います。カメラを見つめてください。</p>
+                <p className="mb-4">{t('employeeAttendance.faceRecognitionInstruction')}</p>
                 
                 <div className="face-recognition">
                   {isRecognizing ? (
@@ -258,17 +260,17 @@ const EmployeeAttendance = () => {
                     />
                   ) : (
                     <div>
-                      <p>カメラを起動中...</p>
+                      <p>{t('employeeAttendance.cameraStarting')}</p>
                     </div>
                   )}
                 </div>
                 
                 <div className="mt-4">
                   <button className="btn" onClick={simulateFaceRecognition}>
-                    顔認識テスト
+                    {t('employeeAttendance.faceRecognitionTest')}
                   </button>
                   <button className="btn btn-secondary" onClick={() => setStep('select')} style={{ marginLeft: '10px' }}>
-                    戻る
+                    {t('common.back')}
                   </button>
                 </div>
               </div>
@@ -276,10 +278,10 @@ const EmployeeAttendance = () => {
             
             {step === 'correction' && (
               <div>
-                <h2 className="text-large mb-4 text-center">打刻修正申請</h2>
+                <h2 className="text-large mb-4 text-center">{t('employeeAttendance.correctionRequest')}</h2>
                 
                 <div className="form-group">
-                  <label className="form-label">修正日 *</label>
+                  <label className="form-label">{t('employeeAttendance.correctionDate')} *</label>
                   <input
                     type="date"
                     className="form-input"
@@ -289,7 +291,7 @@ const EmployeeAttendance = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">修正時刻 *</label>
+                  <label className="form-label">{t('employeeAttendance.correctionTime')} *</label>
                   <input
                     type="time"
                     className="form-input"
@@ -299,31 +301,31 @@ const EmployeeAttendance = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">種別 *</label>
+                  <label className="form-label">{t('employeeAttendance.correctionType')} *</label>
                   <select
                     className="form-select"
                     value={correctionData.type}
                     onChange={(e) => handleCorrectionInputChange('type', e.target.value)}
                   >
-                    <option value="">選択してください</option>
-                    <option value="check-in">入室</option>
-                    <option value="check-out">退室</option>
+                    <option value="">{t('common.pleaseSelect')}</option>
+                    <option value="check-in">{t('employeeAttendance.checkIn')}</option>
+                    <option value="check-out">{t('employeeAttendance.checkOut')}</option>
                   </select>
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">修正理由 *</label>
+                  <label className="form-label">{t('employeeAttendance.correctionReason')} *</label>
                   <textarea
                     className="form-input"
                     rows="4"
                     value={correctionData.reason}
                     onChange={(e) => handleCorrectionInputChange('reason', e.target.value)}
-                    placeholder="打刻修正が必要な理由を入力してください"
+                    placeholder={t('employeeAttendance.correctionReasonPlaceholder')}
                   />
                 </div>
                 
                 <div className="alert alert-info">
-                  申請後、上司に承認メールが送信されます。承認されるまでお待ちください。
+                  {t('employeeAttendance.correctionNotice')}
                 </div>
                 
                 <button
@@ -331,11 +333,11 @@ const EmployeeAttendance = () => {
                   onClick={handleCorrectionSubmit}
                   disabled={!correctionData.date || !correctionData.time || !correctionData.type || !correctionData.reason}
                 >
-                  申請提出
+                  {t('employeeAttendance.submitRequest')}
                 </button>
                 
                 <button className="btn btn-secondary" onClick={() => setStep('select')} style={{ marginLeft: '10px' }}>
-                  戻る
+                  {t('common.back')}
                 </button>
               </div>
             )}
@@ -343,38 +345,38 @@ const EmployeeAttendance = () => {
             {step === 'confirm' && (
               <div>
                 <h2 className="text-large mb-4 text-center">
-                  {attendanceType === 'correction' ? '申請完了' : '打刻完了'}
+                  {attendanceType === 'correction' ? t('employeeAttendance.requestCompleted') : t('employeeAttendance.attendanceCompleted')}
                 </h2>
                 
                 {attendanceType === 'correction' ? (
                   <div>
                     <div className="alert alert-success">
-                      打刻修正申請を提出しました。上司に承認メールを送信しました。
+                      {t('employeeAttendance.correctionSubmitted')}
                     </div>
                     
                     <div className="visitor-info">
-                      <h3>申請内容</h3>
-                      <p><strong>修正日:</strong> {correctionData.date}</p>
-                      <p><strong>修正時刻:</strong> {correctionData.time}</p>
-                      <p><strong>種別:</strong> {correctionData.type === 'check-in' ? '入室' : '退室'}</p>
-                      <p><strong>理由:</strong> {correctionData.reason}</p>
-                      <p><strong>申請日時:</strong> {new Date().toLocaleString('ja-JP')}</p>
-                      <p><strong>ステータス:</strong> 承認待ち</p>
+                      <h3>{t('employeeAttendance.requestDetails')}</h3>
+                      <p><strong>{t('employeeAttendance.correctionDate')}:</strong> {correctionData.date}</p>
+                      <p><strong>{t('employeeAttendance.correctionTime')}:</strong> {correctionData.time}</p>
+                      <p><strong>{t('employeeAttendance.correctionType')}:</strong> {correctionData.type === 'check-in' ? t('employeeAttendance.checkIn') : t('employeeAttendance.checkOut')}</p>
+                      <p><strong>{t('employeeAttendance.correctionReason')}:</strong> {correctionData.reason}</p>
+                      <p><strong>{t('employeeAttendance.requestDateTime')}:</strong> {new Date().toLocaleString('ja-JP')}</p>
+                      <p><strong>{t('employeeAttendance.status')}:</strong> {t('employeeAttendance.pendingApproval')}</p>
                     </div>
                   </div>
                 ) : (
                   <div>
                     <div className="alert alert-success">
-                      {attendanceType === 'check-in' ? '入室' : '退室'}打刻が完了しました。
+                      {attendanceType === 'check-in' ? t('employeeAttendance.checkIn') : t('employeeAttendance.checkOut')}{t('employeeAttendance.attendanceCompleted')}
                     </div>
                     
                     {employee && (
                       <div className="visitor-info">
-                        <h3>打刻情報</h3>
-                        <p><strong>従業員:</strong> {employee.name}</p>
-                        <p><strong>部署:</strong> {employee.department}</p>
-                        <p><strong>種別:</strong> {attendanceType === 'check-in' ? '入室' : '退室'}</p>
-                        <p><strong>打刻時刻:</strong> {new Date().toLocaleString('ja-JP')}</p>
+                        <h3>{t('employeeAttendance.attendanceInfo')}</h3>
+                        <p><strong>{t('employeeAttendance.employee')}:</strong> {employee.name}</p>
+                        <p><strong>{t('employeeAttendance.department')}:</strong> {employee.department}</p>
+                        <p><strong>{t('employeeAttendance.type')}:</strong> {attendanceType === 'check-in' ? t('employeeAttendance.checkIn') : t('employeeAttendance.checkOut')}</p>
+                        <p><strong>{t('employeeAttendance.attendanceTime')}:</strong> {new Date().toLocaleString('ja-JP')}</p>
                       </div>
                     )}
                   </div>
@@ -382,28 +384,28 @@ const EmployeeAttendance = () => {
                 
                 {/* 今日の打刻履歴 */}
                 <div className="visitor-info mt-4">
-                  <h3>今日の打刻履歴</h3>
+                  <h3>{t('employeeAttendance.todayHistory')}</h3>
                   {attendanceHistory.length > 0 ? (
                     <div>
                       {attendanceHistory
                         .filter(record => record.date === new Date().toLocaleDateString('ja-JP'))
                         .map((record, index) => (
                         <p key={index}>
-                          <strong>{record.time}</strong> - {record.type === 'check-in' ? '入室' : '退室'}
+                          <strong>{record.time}</strong> - {record.type === 'check-in' ? t('employeeAttendance.checkIn') : t('employeeAttendance.checkOut')}
                         </p>
                       ))}
                     </div>
                   ) : (
-                    <p>本日の打刻履歴はありません。</p>
+                    <p>{t('employeeAttendance.noHistoryToday')}</p>
                   )}
                 </div>
                 
                 <div className="text-center mt-4">
                   <button className="btn btn-large" onClick={handleReset}>
-                    新しい打刻
+                    {t('employeeAttendance.newAttendance')}
                   </button>
                   <button className="btn btn-secondary" onClick={exportAttendanceHistory} style={{ marginLeft: '10px' }}>
-                    履歴エクスポート
+                    {t('employeeAttendance.exportHistory')}
                   </button>
                 </div>
               </div>

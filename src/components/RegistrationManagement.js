@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import registrationService from '../services/registrationService';
 import emailService from '../services/emailService';
 
 const RegistrationManagement = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [registrations, setRegistrations] = useState([]);
   const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState('');
@@ -82,18 +84,18 @@ const RegistrationManagement = () => {
     const updated = registrationService.checkInRegistration(registrationId);
     if (updated) {
       loadRegistrations();
-      alert('チェックインが完了しました。');
+      alert(t('registrationManagement.checkInCompleted'));
     } else {
-      alert('チェックインに失敗しました。');
+      alert(t('registrationManagement.checkInFailed'));
     }
   };
 
   const handleCancel = (registrationId) => {
-    const reason = prompt('キャンセル理由を入力してください（任意）:');
+    const reason = prompt(t('registrationManagement.enterCancelReason'));
     const updated = registrationService.cancelRegistration(registrationId, reason || '');
     if (updated) {
       loadRegistrations();
-      alert('申込がキャンセルされました。');
+      alert(t('registrationManagement.registrationCancelled'));
     }
   };
 
@@ -106,13 +108,13 @@ const RegistrationManagement = () => {
       });
       
       if (emailResult.success) {
-        alert(`${registration.name}様にメールを再送信しました。`);
+        alert(t('registrationManagement.emailResent', { name: registration.name }));
       } else {
-        alert(`メール送信に失敗しました: ${emailResult.error}`);
+        alert(t('registrationManagement.emailSendFailed', { error: emailResult.error }));
       }
     } catch (error) {
       console.error('メール再送信エラー:', error);
-      alert('メール送信中にエラーが発生しました。');
+      alert(t('registrationManagement.emailSendError'));
     }
   };
 
@@ -124,13 +126,13 @@ const RegistrationManagement = () => {
       });
       
       if (emailResult.success) {
-        alert(`${registration.name}様にリマインダーメールを送信しました。`);
+        alert(t('registrationManagement.reminderSent', { name: registration.name }));
       } else {
-        alert(`リマインダー送信に失敗しました: ${emailResult.error}`);
+        alert(t('registrationManagement.reminderSendFailed', { error: emailResult.error }));
       }
     } catch (error) {
       console.error('リマインダー送信エラー:', error);
-      alert('リマインダー送信中にエラーが発生しました。');
+      alert(t('registrationManagement.reminderSendError'));
     }
   };
 
@@ -160,7 +162,7 @@ const RegistrationManagement = () => {
       link.click();
       document.body.removeChild(link);
     } else {
-      alert('エクスポートするデータがありません。');
+      alert(t('registrationManagement.noDataToExport'));
     }
   };
 
@@ -171,7 +173,7 @@ const RegistrationManagement = () => {
 
   const getSelectedEventName = () => {
     const event = events.find(e => e.id === selectedEvent);
-    return event ? event.title : '全イベント';
+    return event ? event.title : t('registrationManagement.allEvents');
   };
 
   const formatDate = (dateString) => {
@@ -180,9 +182,9 @@ const RegistrationManagement = () => {
 
   const getStatusBadge = (status) => {
     const badges = {
-      'registered': { class: 'status-registered', text: '申込済' },
-      'attended': { class: 'status-attended', text: '参加済' },
-      'cancelled': { class: 'status-cancelled', text: 'キャンセル' }
+      'registered': { class: 'status-registered', text: t('registrationManagement.registered') },
+      'attended': { class: 'status-attended', text: t('registrationManagement.attended') },
+      'cancelled': { class: 'status-cancelled', text: t('registrationManagement.cancelled') }
     };
     const badge = badges[status] || { class: 'status-unknown', text: status };
     return <span className={`status-badge ${badge.class}`}>{badge.text}</span>;
@@ -193,23 +195,23 @@ const RegistrationManagement = () => {
   return (
     <div className="main-content">
       <button className="back-button" onClick={() => navigate('/admin')}>
-        ← 管理画面
+        {t('common.backToAdmin')}
       </button>
       
       <div className="container">
-        <h1 className="page-title">申込者情報管理</h1>
+        <h1 className="page-title">{t('registrationManagement.title')}</h1>
         
         {/* 検索・フィルター */}
         <div className="registration-controls">
           <div className="control-row">
             <div className="form-group">
-              <label>イベント選択:</label>
+              <label>{t('registrationManagement.filterByEvent')}:</label>
               <select 
                 value={selectedEvent} 
                 onChange={(e) => handleEventChange(e.target.value)}
                 className="form-control"
               >
-                <option value="">全イベント</option>
+                <option value="">{t('registrationManagement.allEvents')}</option>
                 {events.map(event => (
                   <option key={event.id} value={event.id}>{event.title}</option>
                 ))}
@@ -217,34 +219,34 @@ const RegistrationManagement = () => {
             </div>
             
             <div className="form-group">
-              <label>検索:</label>
+              <label>{t('registrationManagement.search')}:</label>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                placeholder="氏名、メール、会社名で検索"
+                placeholder={t('registrationManagement.searchPlaceholder')}
                 className="form-control"
               />
             </div>
             
             <div className="form-group">
-              <label>ステータス:</label>
+              <label>{t('registrationManagement.filterByStatus')}:</label>
               <select 
                 value={filterStatus} 
                 onChange={(e) => handleStatusFilter(e.target.value)}
                 className="form-control"
               >
-                <option value="all">全て</option>
-                <option value="registered">申込済</option>
-                <option value="attended">参加済</option>
-                <option value="cancelled">キャンセル</option>
+                <option value="all">{t('registrationManagement.allStatuses')}</option>
+                <option value="registered">{t('registrationManagement.registered')}</option>
+                <option value="attended">{t('registrationManagement.attended')}</option>
+                <option value="cancelled">{t('registrationManagement.cancelled')}</option>
               </select>
             </div>
           </div>
           
           <div className="control-actions">
             <button onClick={handleExportCSV} className="btn btn-secondary">
-              📊 CSV出力
+              📊 {t('registrationManagement.exportCSV')}
             </button>
           </div>
         </div>
@@ -252,27 +254,27 @@ const RegistrationManagement = () => {
         {/* 統計情報 */}
         {statistics && (
           <div className="statistics-panel">
-            <h3>申込状況 - {getSelectedEventName()}</h3>
+            <h3>{t('registrationManagement.eventStatistics')} - {getSelectedEventName()}</h3>
             <div className="stats-grid">
               <div className="stat-item">
                 <span className="stat-number">{statistics.total}</span>
-                <span className="stat-label">総申込数</span>
+                <span className="stat-label">{t('registrationManagement.totalRegistrations')}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-number">{statistics.registered}</span>
-                <span className="stat-label">申込済</span>
+                <span className="stat-label">{t('registrationManagement.registered')}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-number">{statistics.attended}</span>
-                <span className="stat-label">参加済</span>
+                <span className="stat-label">{t('registrationManagement.attended')}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-number">{statistics.cancelled}</span>
-                <span className="stat-label">キャンセル</span>
+                <span className="stat-label">{t('registrationManagement.cancelled')}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-number">{statistics.checkInRate}%</span>
-                <span className="stat-label">参加率</span>
+                <span className="stat-label">{t('registrationManagement.attendanceRate')}</span>
               </div>
             </div>
           </div>
@@ -280,23 +282,23 @@ const RegistrationManagement = () => {
 
         {/* 申込者一覧 */}
         <div className="registrations-list">
-          <h3>申込者一覧 ({filteredRegistrations.length}件)</h3>
+          <h3>{t('registrationManagement.registrationsList')} ({filteredRegistrations.length}{t('registrationManagement.items')})</h3>
           
           {filteredRegistrations.length === 0 ? (
             <div className="no-data">
-              <p>申込者データがありません。</p>
+              <p>{t('registrationManagement.noData')}</p>
             </div>
           ) : (
             <div className="table-container">
               <table className="registrations-table">
                 <thead>
                   <tr>
-                    <th>氏名</th>
-                    <th>メールアドレス</th>
-                    <th>会社名</th>
-                    <th>申込日時</th>
-                    <th>ステータス</th>
-                    <th>操作</th>
+                    <th>{t('registrationManagement.name')}</th>
+                    <th>{t('registrationManagement.email')}</th>
+                    <th>{t('registrationManagement.company')}</th>
+                    <th>{t('registrationManagement.registrationDate')}</th>
+                    <th>{t('registrationManagement.status')}</th>
+                    <th>{t('registrationManagement.actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -319,7 +321,7 @@ const RegistrationManagement = () => {
                           <button 
                             onClick={() => handleViewDetails(registration)}
                             className="btn btn-sm btn-info"
-                            title="詳細表示"
+                            title={t('registrationManagement.viewDetails')}
                           >
                             👁️
                           </button>
@@ -327,7 +329,7 @@ const RegistrationManagement = () => {
                             <button 
                               onClick={() => handleCheckIn(registration.id)}
                               className="btn btn-sm btn-success"
-                              title="チェックイン"
+                              title={t('registrationManagement.checkIn')}
                             >
                               ✅
                             </button>
@@ -336,7 +338,7 @@ const RegistrationManagement = () => {
                             <button 
                               onClick={() => handleCancel(registration.id)}
                               className="btn btn-sm btn-danger"
-                              title="キャンセル"
+                              title={t('registrationManagement.cancel')}
                             >
                               ❌
                             </button>
@@ -344,14 +346,14 @@ const RegistrationManagement = () => {
                           <button
                             className="btn btn-sm btn-secondary"
                             onClick={() => handleResendEmail(registration)}
-                            title="メール再送信"
+                            title={t('registrationManagement.resendEmail')}
                           >
                             📧
                           </button>
                           <button
                             className="btn btn-sm"
                             onClick={() => handleSendReminder(registration)}
-                            title="リマインダー"
+                            title={t('registrationManagement.sendReminder')}
                           >
                             🔔
                           </button>
@@ -370,7 +372,7 @@ const RegistrationManagement = () => {
           <div className="modal-overlay" onClick={() => setShowDetails(false)}>
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h3>申込者詳細情報</h3>
+                <h3>{t('registrationManagement.registrationDetails')}</h3>
                 <button 
                   onClick={() => setShowDetails(false)}
                   className="modal-close"
@@ -382,65 +384,65 @@ const RegistrationManagement = () => {
               <div className="modal-body">
                 <div className="detail-grid">
                   <div className="detail-item">
-                    <label>申込ID:</label>
+                    <label>{t('registrationManagement.registrationId')}:</label>
                     <span>{selectedRegistration.id}</span>
                   </div>
                   <div className="detail-item">
-                    <label>氏名:</label>
+                    <label>{t('registrationManagement.name')}:</label>
                     <span>{selectedRegistration.name}</span>
                   </div>
                   <div className="detail-item">
-                    <label>フリガナ:</label>
+                    <label>{t('registrationManagement.furigana')}:</label>
                     <span>{selectedRegistration.furigana || '-'}</span>
                   </div>
                   <div className="detail-item">
-                    <label>メールアドレス:</label>
+                    <label>{t('registrationManagement.email')}:</label>
                     <span>{selectedRegistration.email}</span>
                   </div>
                   <div className="detail-item">
-                    <label>電話番号:</label>
+                    <label>{t('registrationManagement.phone')}:</label>
                     <span>{selectedRegistration.phone || '-'}</span>
                   </div>
                   <div className="detail-item">
-                    <label>会社名:</label>
+                    <label>{t('registrationManagement.company')}:</label>
                     <span>{selectedRegistration.company || '-'}</span>
                   </div>
                   <div className="detail-item">
-                    <label>部署:</label>
+                    <label>{t('registrationManagement.department')}:</label>
                     <span>{selectedRegistration.department || '-'}</span>
                   </div>
                   <div className="detail-item">
-                    <label>役職:</label>
+                    <label>{t('registrationManagement.position')}:</label>
                     <span>{selectedRegistration.position || '-'}</span>
                   </div>
                   <div className="detail-item">
-                    <label>申込日時:</label>
+                    <label>{t('registrationManagement.registrationDate')}:</label>
                     <span>{formatDate(selectedRegistration.registeredAt)}</span>
                   </div>
                   <div className="detail-item">
-                    <label>ステータス:</label>
+                    <label>{t('registrationManagement.status')}:</label>
                     <span>{getStatusBadge(selectedRegistration.status)}</span>
                   </div>
                   {selectedRegistration.checkInTime && (
                     <div className="detail-item">
-                      <label>チェックイン日時:</label>
+                      <label>{t('registrationManagement.checkInTime')}:</label>
                       <span>{formatDate(selectedRegistration.checkInTime)}</span>
                     </div>
                   )}
                   {selectedRegistration.cancelledAt && (
                     <div className="detail-item">
-                      <label>キャンセル日時:</label>
+                      <label>{t('registrationManagement.cancelledTime')}:</label>
                       <span>{formatDate(selectedRegistration.cancelledAt)}</span>
                     </div>
                   )}
                   {selectedRegistration.cancelReason && (
                     <div className="detail-item">
-                      <label>キャンセル理由:</label>
+                      <label>{t('registrationManagement.cancelReason')}:</label>
                       <span>{selectedRegistration.cancelReason}</span>
                     </div>
                   )}
                   <div className="detail-item full-width">
-                    <label>QRコード:</label>
+                    <label>{t('registrationManagement.qrCode')}:</label>
                     <textarea 
                       value={selectedRegistration.qrCode} 
                       readOnly 
@@ -455,7 +457,7 @@ const RegistrationManagement = () => {
                   onClick={() => setShowDetails(false)}
                   className="btn btn-secondary"
                 >
-                  閉じる
+                  {t('common.close')}
                 </button>
               </div>
             </div>

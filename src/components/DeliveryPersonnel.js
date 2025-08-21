@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const DeliveryPersonnel = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState('input'); // input, confirm
   const [selectedCompany, setSelectedCompany] = useState('');
   const [notificationSent, setNotificationSent] = useState(false);
 
   // 常用配送会社一覧
   const deliveryCompanies = [
-    { id: 'yamato', name: 'ヤマト運輸', contact: '総務部' },
-    { id: 'sagawa', name: '佐川急便', contact: '総務部' },
-    { id: 'jppost', name: '日本郵便', contact: '総務部' },
-    { id: 'seino', name: 'セイノー運輸', contact: '総務部' },
-    { id: 'fukutsu', name: '福山通運', contact: '総務部' },
-    { id: 'amazon', name: 'Amazon配送', contact: 'DX推進部' },
-    { id: 'other', name: 'その他', contact: '総務部' }
+    { id: 'yamato', name: t('deliveryPersonnel.companies.yamato'), contact: t('deliveryPersonnel.departments.general') },
+    { id: 'sagawa', name: t('deliveryPersonnel.companies.sagawa'), contact: t('deliveryPersonnel.departments.general') },
+    { id: 'jppost', name: t('deliveryPersonnel.companies.jppost'), contact: t('deliveryPersonnel.departments.general') },
+    { id: 'seino', name: t('deliveryPersonnel.companies.seino'), contact: t('deliveryPersonnel.departments.general') },
+    { id: 'fukutsu', name: t('deliveryPersonnel.companies.fukutsu'), contact: t('deliveryPersonnel.departments.general') },
+    { id: 'amazon', name: t('deliveryPersonnel.companies.amazon'), contact: t('deliveryPersonnel.departments.dx') },
+    { id: 'other', name: t('deliveryPersonnel.companies.other'), contact: t('deliveryPersonnel.departments.general') }
   ];
 
   const handleCompanySelect = (companyId) => {
@@ -54,24 +56,24 @@ const DeliveryPersonnel = () => {
   return (
     <div className="main-content">
       <button className="back-button" onClick={() => navigate('/')}>
-        ← ホーム
+        {t('common.backToHome')}
       </button>
       
       <div className="container">
-        <h1 className="page-title">配送業者受付</h1>
+        <h1 className="page-title">{t('deliveryPersonnel.title')}</h1>
         
         <div className="form-container">
           <div className="form-card">
             {step === 'input' && (
               <div>
-                <h2 className="text-large mb-4 text-center">配送会社選択</h2>
+                <h2 className="text-large mb-4 text-center">{t('deliveryPersonnel.selectCompany')}</h2>
                 
                 <div className="alert alert-info mb-4">
-                  配送業者が到着しました。該当する配送会社を選択して担当者に通知してください。
+                  {t('deliveryPersonnel.arrivalMessage')}
                 </div>
                 
                 <div className="form-group">
-                  <label className="form-label">配送会社を選択してください *</label>
+                  <label className="form-label">{t('deliveryPersonnel.selectCompanyLabel')} *</label>
                   <div className="company-grid">
                     {deliveryCompanies.map((company) => (
                       <div
@@ -82,7 +84,7 @@ const DeliveryPersonnel = () => {
                         onClick={() => handleCompanySelect(company.id)}
                       >
                         <div className="company-name">{company.name}</div>
-                        <div className="company-contact">担当: {company.contact}</div>
+                        <div className="company-contact">{t('deliveryPersonnel.responsible')}: {company.contact}</div>
                       </div>
                     ))}
                   </div>
@@ -94,7 +96,7 @@ const DeliveryPersonnel = () => {
                     onClick={handleNotify}
                     disabled={!selectedCompany}
                   >
-                    担当者に通知
+                    {t('deliveryPersonnel.notifyResponsible')}
                   </button>
                 </div>
               </div>
@@ -102,26 +104,26 @@ const DeliveryPersonnel = () => {
             
             {step === 'confirm' && (
               <div>
-                <h2 className="text-large mb-4 text-center">通知完了</h2>
+                <h2 className="text-large mb-4 text-center">{t('deliveryPersonnel.notificationComplete')}</h2>
                 
                 <div className="alert alert-success">
-                  担当者にTeams通知を送信しました。
+                  {t('deliveryPersonnel.teamsSent')}
                 </div>
                 
                 <div className="visitor-info">
-                  <h3>通知情報</h3>
-                  <p><strong>配送会社:</strong> {deliveryCompanies.find(c => c.id === selectedCompany)?.name}</p>
-                  <p><strong>通知先:</strong> {deliveryCompanies.find(c => c.id === selectedCompany)?.contact}</p>
-                  <p><strong>通知時刻:</strong> {new Date().toLocaleString('ja-JP')}</p>
+                  <h3>{t('deliveryPersonnel.notificationInfo')}</h3>
+                  <p><strong>{t('deliveryPersonnel.deliveryCompany')}:</strong> {deliveryCompanies.find(c => c.id === selectedCompany)?.name}</p>
+                  <p><strong>{t('deliveryPersonnel.notificationTarget')}:</strong> {deliveryCompanies.find(c => c.id === selectedCompany)?.contact}</p>
+                  <p><strong>{t('deliveryPersonnel.notificationTime')}:</strong> {new Date().toLocaleString('ja-JP')}</p>
                 </div>
                 
                 <div className="alert alert-info">
-                  担当者が対応に向かいます。配送業者にはしばらくお待ちいただくようお伝えください。
+                  {t('deliveryPersonnel.waitingMessage')}
                 </div>
                 
                 <div className="text-center mt-4">
                   <button className="btn btn-large" onClick={handleReset}>
-                    新しい通知
+                    {t('deliveryPersonnel.newNotification')}
                   </button>
                 </div>
               </div>

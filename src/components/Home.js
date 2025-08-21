@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [menuSettings, setMenuSettings] = useState({
     showDailyVisitorMenu: true,
     showEventReceptionMenu: true,
@@ -29,40 +31,40 @@ const Home = () => {
   const allMenuItems = [
     {
       id: 'daily-visitor',
-      title: '日常来訪者',
-      description: '日常の来訪者受付',
+      title: t('home.dailyVisitor'),
+      description: t('dailyVisitor.title'),
       icon: '👥',
       path: '/daily-visitor',
       condition: 'showDailyVisitorMenu'
     },
     {
       id: 'event-reception',
-      title: 'イベント受付',
-      description: 'イベント参加者の受付',
+      title: t('home.eventReception'),
+      description: t('eventReception.title'),
       icon: '🎪',
       path: '/event-reception',
       condition: 'showEventReceptionMenu'
     },
     {
       id: 'employee-attendance',
-      title: '社員用',
-      description: '社員の出退勤管理',
+      title: t('home.employeeAttendance'),
+      description: t('employeeAttendance.title'),
       icon: '👔',
       path: '/employee-attendance',
       condition: 'showEmployeeMenu'
     },
     {
       id: 'delivery',
-      title: '配送業者',
-      description: '配送業者の受付',
+      title: t('home.deliveryPersonnel'),
+      description: t('deliveryPersonnel.title'),
       icon: '🚚',
       path: '/delivery',
       condition: 'showDeliveryMenu'
     },
     {
       id: 'interviewer',
-      title: '面接者',
-      description: '面接者の受付',
+      title: t('home.interviewer'),
+      description: t('interviewer.title'),
       icon: '💼',
       path: '/interviewer',
       condition: 'showInterviewerMenu'
@@ -85,9 +87,9 @@ const Home = () => {
   return (
     <div className="main-content">
       <div className="container">
-        <h1 className="page-title">BSH EVRS</h1>
+        <h1 className="page-title">{t('home.title')}</h1>
         <p className="text-center" style={{ color: 'white', fontSize: '18px', marginBottom: '50px' }}>
-          Event & Visitor Reception System - 受付システム
+          {t('home.subtitle')}
         </p>
         
         <div className="home-grid">
